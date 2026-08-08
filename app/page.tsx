@@ -7,6 +7,10 @@ export const metadata: Metadata = {
 };
 
 const checkoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL || "#launch-offer";
+const checkoutReady = Boolean(process.env.NEXT_PUBLIC_CHECKOUT_URL);
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const checkoutTarget = checkoutReady ? "_blank" : undefined;
+const checkoutRel = checkoutReady ? "noopener noreferrer" : undefined;
 
 const features = [
   ["01", "Batch-ready", "Drop a full product set and apply one clean, consistent treatment to every photo."],
@@ -26,7 +30,7 @@ export default function Home() {
         <div className="nav-links">
           <a href="#demo">Try it</a>
           <a href="#features">Features</a>
-          <a className="button button-small button-dark" href={checkoutUrl}>Get the full edition</a>
+          <a className="button button-small button-dark" href={checkoutUrl} target={checkoutTarget} rel={checkoutRel}>Get the full edition</a>
         </div>
       </nav>
 
@@ -47,17 +51,17 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="hero-visual" aria-label="Before and after product photo illustration">
-          <div className="visual-grid" />
+        <div className="hero-visual" aria-label="Realistic before and after marketplace product photos">
+          <div className="visual-grid"><img src={`${basePath}/hero-marketplace.png`} alt="Skincare bottle, planter, and woven textile arranged for an online catalogue" /></div>
           <div className="photo-card photo-before">
             <div className="card-label">Before</div>
-            <div className="product-shape product-before-shape"><span className="bottle-cap" /><span className="bottle-body" /></div>
+            <img className="product-photo product-photo-before" src={`${basePath}/seller-bag.png`} alt="Original product photo of a handmade orange crossbody bag" />
             <span className="scribble">camera roll</span>
           </div>
           <div className="photo-card photo-after">
             <div className="card-label card-label-dark">Ready to sell</div>
             <div className="price-chip">₹799</div>
-            <div className="product-shape"><span className="bottle-cap" /><span className="bottle-body" /></div>
+            <img className="product-photo product-photo-after" src={`${basePath}/seller-bag.png`} alt="Marketplace-ready presentation of the handmade orange crossbody bag" />
             <div className="mini-brand">YOUR STORE</div>
           </div>
           <div className="batch-chip"><strong>12</strong><span>photos ready</span></div>
@@ -76,7 +80,7 @@ export default function Home() {
           <p>Your images never leave this page. Try the complete workflow with up to three photos, then download the full offline edition for larger batches.</p>
         </div>
         <div className="shell studio-frame-wrap">
-          <iframe className="studio-frame" src="/demo.html" title="SellerPhoto Studio free demo" loading="eager" />
+          <iframe className="studio-frame" src={`${basePath}/demo.html`} title="SellerPhoto Studio free demo" loading="eager" />
         </div>
       </section>
 
@@ -119,8 +123,10 @@ export default function Home() {
           <span className="launch-badge">FIRST 20 CUSTOMERS</span>
           <div className="price"><sup>₹</sup>499</div>
           <p className="price-note">One payment. No subscription.</p>
-          <a className="button button-primary button-wide" href={checkoutUrl}>Get SellerPhoto Studio <span>→</span></a>
-          {!process.env.NEXT_PUBLIC_CHECKOUT_URL && <p className="checkout-note">Secure checkout will open after store activation.</p>}
+          <a className="button button-primary button-wide" href={checkoutUrl} target={checkoutTarget} rel={checkoutRel}>Get SellerPhoto Studio <span>→</span></a>
+          {checkoutReady
+            ? <p className="checkout-note checkout-ready">Secure Razorpay checkout opens in a new tab.</p>
+            : <p className="checkout-note">Secure checkout will open after store activation.</p>}
           <div className="price-divider" /><p className="regular-price">Regular price after launch: <strong>₹799</strong></p>
         </aside>
       </section>
