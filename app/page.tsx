@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "SellerPhoto Studio — Marketplace-ready product photos in minutes",
   description:
-    "Batch-format product photos for Meesho, Amazon, Flipkart, Instagram, and WhatsApp. Private, fast, and processed on your device.",
+    "Batch-format product photos for Meesho, Amazon, Flipkart, Myntra, Instagram, and WhatsApp. Private, fast, and processed on your device.",
 };
 
 const checkoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL || "#launch-offer";
@@ -11,6 +11,24 @@ const checkoutReady = Boolean(process.env.NEXT_PUBLIC_CHECKOUT_URL);
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const checkoutTarget = checkoutReady ? "_blank" : undefined;
 const checkoutRel = checkoutReady ? "noopener noreferrer" : undefined;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "SellerPhoto Studio",
+  applicationCategory: "DesignApplication",
+  operatingSystem: "Any modern web browser",
+  url: siteUrl,
+  description:
+    "A private batch product-photo formatter for Amazon, Flipkart, Meesho, Myntra, Instagram, and WhatsApp sellers.",
+  offers: {
+    "@type": "Offer",
+    price: "499",
+    priceCurrency: "INR",
+    availability: "https://schema.org/InStock",
+  },
+};
 
 const features = [
   ["01", "Batch-ready", "Drop a full product set and apply one clean, consistent treatment to every photo."],
@@ -22,6 +40,10 @@ const features = [
 export default function Home() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+      />
       <nav className="site-nav shell" aria-label="Primary navigation">
         <a className="brand" href="#top" aria-label="SellerPhoto Studio home">
           <span className="brand-mark" aria-hidden="true">S</span>
@@ -40,7 +62,7 @@ export default function Home() {
           <h1>Turn everyday photos into a <em>clean product catalogue.</em></h1>
           <p className="hero-lede">
             Format, brand, resize, and export an entire batch for Meesho, Amazon,
-            Flipkart, Instagram, or WhatsApp—without uploading a single image.
+            Flipkart, Myntra, Instagram, or WhatsApp—without uploading a single image.
           </p>
           <div className="hero-actions">
             <a className="button button-primary" href="#demo">Try 3 photos free <span>↓</span></a>
@@ -70,7 +92,7 @@ export default function Home() {
 
       <section className="trust-strip" aria-label="Supported channels">
         <div className="shell trust-inner">
-          <span>READY FOR</span><strong>MEESHO</strong><strong>AMAZON</strong><strong>FLIPKART</strong><strong>INSTAGRAM</strong><strong>WHATSAPP</strong>
+          <span>READY FOR</span><strong>MEESHO</strong><strong>AMAZON</strong><strong>FLIPKART</strong><strong>MYNTRA</strong><strong>INSTAGRAM</strong><strong>WHATSAPP</strong>
         </div>
       </section>
 
@@ -141,7 +163,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer><div className="shell footer-inner"><div className="brand brand-light"><span className="brand-mark">S</span><span>SellerPhoto Studio</span></div><p>Built for small sellers who would rather be selling.</p><a href="#top">Back to top ↑</a></div></footer>
+      <footer><div className="shell footer-inner"><div className="brand brand-light"><span className="brand-mark">S</span><span>SellerPhoto Studio</span></div><p>Built for small sellers who would rather be selling. Not affiliated with any marketplace.</p><a href="#top">Back to top ↑</a></div></footer>
     </main>
   );
 }
