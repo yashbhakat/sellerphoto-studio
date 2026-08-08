@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light" />
+  <title>SellerPhoto Studio — Free Demo</title>
+  <link rel="stylesheet" href="/studio.css" />
+</head>
+<body data-mode="demo" data-limit="3">
+  <div class="studio-app">
+    <header class="studio-topbar">
+      <div class="studio-brand"><span class="studio-logo">S</span><span>SellerPhoto Studio</span></div>
+      <span class="mode-pill" id="modePill">FREE DEMO · 3 PHOTOS</span>
+    </header>
+
+    <main class="studio-layout">
+      <aside class="control-panel">
+        <div class="panel-heading"><span>01</span><div><h1>Style the batch</h1><p>One setup, every image.</p></div></div>
+
+        <section class="control-group">
+          <label class="field-label" for="preset">Marketplace size</label>
+          <select id="preset">
+            <option value="1200x1200">Marketplace square · 1200 × 1200</option>
+            <option value="1080x1080">Instagram / WhatsApp · 1080 × 1080</option>
+            <option value="1080x1350">Instagram portrait · 1080 × 1350</option>
+            <option value="1080x1920">Story / Status · 1080 × 1920</option>
+            <option value="1500x1500">High-res catalogue · 1500 × 1500</option>
+          </select>
+        </section>
+
+        <section class="control-group two-col">
+          <div>
+            <span class="field-label">Photo fit</span>
+            <div class="segmented">
+              <label><input type="radio" name="fit" value="contain" checked /><span>Fit</span></label>
+              <label><input type="radio" name="fit" value="cover" /><span>Fill</span></label>
+            </div>
+          </div>
+          <div>
+            <label class="field-label" for="background">Background</label>
+            <div class="color-field"><input id="background" type="color" value="#ffffff" /><span id="backgroundText">#FFFFFF</span></div>
+          </div>
+        </section>
+
+        <section class="control-group">
+          <div class="range-label"><label class="field-label" for="margin">Product margin</label><output id="marginValue">6%</output></div>
+          <input id="margin" type="range" min="0" max="24" value="6" />
+        </section>
+
+        <section class="control-group">
+          <label class="field-label" for="storeName">Store name / watermark</label>
+          <input id="storeName" type="text" maxlength="36" placeholder="e.g. Mahi Home Store" />
+        </section>
+
+        <section class="control-group">
+          <div class="toggle-row"><label for="showPrice">Show price badge</label><input id="showPrice" type="checkbox" checked /></div>
+          <div class="two-col compact-row">
+            <input id="priceText" type="text" maxlength="14" value="₹799" aria-label="Price badge text" />
+            <div class="color-field"><input id="badgeColor" type="color" value="#c7ff4a" /><span>Badge</span></div>
+          </div>
+        </section>
+
+        <section class="control-group">
+          <div class="range-label"><label class="field-label" for="logoInput">Optional logo</label><button class="plain-button" id="removeLogo" type="button" hidden>Remove</button></div>
+          <label class="upload-logo" for="logoInput"><span>＋</span><span id="logoLabel">Choose PNG or JPG</span></label>
+          <input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+        </section>
+
+        <section class="control-group two-col">
+          <div><label class="field-label" for="format">Output</label><select id="format"><option value="jpeg">JPG</option><option value="png">PNG</option></select></div>
+          <div><div class="range-label"><label class="field-label" for="quality">Quality</label><output id="qualityValue">90%</output></div><input id="quality" type="range" min="60" max="100" value="90" /></div>
+        </section>
+      </aside>
+
+      <section class="preview-panel">
+        <div class="preview-toolbar">
+          <div><span class="toolbar-kicker">Live preview</span><strong id="previewName">Add a photo to begin</strong></div>
+          <span id="dimensionLabel">1200 × 1200 px</span>
+        </div>
+        <div class="preview-stage" id="previewStage">
+          <div class="preview-placeholder" id="previewPlaceholder">
+            <span class="placeholder-icon">□</span>
+            <strong>Your formatted photo appears here</strong>
+            <p>Add a product photo, then experiment with the controls.</p>
+          </div>
+          <img id="previewImage" alt="Formatted product preview" hidden />
+          <div class="rendering" id="rendering" hidden>Rendering preview…</div>
+        </div>
+        <div class="privacy-note"><span>●</span> Images are processed locally and never uploaded.</div>
+      </section>
+
+      <aside class="queue-panel">
+        <div class="panel-heading queue-heading"><span>02</span><div><h2>Your photos</h2><p><strong id="photoCount">0</strong> of <strong id="photoLimit">3</strong> added</p></div></div>
+        <label class="drop-zone" id="dropZone" for="photoInput">
+          <span class="drop-icon">＋</span><strong>Drop product photos</strong><small>or click to browse · JPG, PNG, WebP</small>
+        </label>
+        <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
+        <div class="queue-list" id="queueList"><p class="empty-queue">Your batch is empty.</p></div>
+        <div class="queue-actions">
+          <button class="clear-button" id="clearAll" type="button" disabled>Clear all</button>
+          <button class="export-button" id="exportBatch" type="button" disabled><span>Download ZIP</span><span>↓</span></button>
+        </div>
+        <div class="progress-track" id="progressTrack" hidden><span id="progressBar" /></div>
+        <p class="status-message" id="statusMessage" aria-live="polite">Add photos to create your first batch.</p>
+        <p class="demo-note" id="demoNote">The offline edition processes up to 50 photos per batch.</p>
+      </aside>
+    </main>
+  </div>
+  <script src="/studio.js"></script>
+</body>
+</html>
