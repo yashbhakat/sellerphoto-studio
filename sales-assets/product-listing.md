@@ -9,7 +9,7 @@ Turn a folder of ordinary product photos into a consistent marketplace-ready cat
 - Launch price: ₹499 for the first 20 customers
 - Regular price: ₹799
 - Licence: one buyer, unlimited personal or single-business use
-- Delivery: instant ZIP download
+- Delivery: ZIP sent after successful payment confirmation; state the tested delivery timeframe on the live checkout page
 
 ## Full description
 
@@ -51,5 +51,4 @@ Download and extract the ZIP, then open `index.html`. A quick-start guide is inc
 
 ## Suggested refund policy
 
-Because this is an immediately delivered digital download, refunds are offered only when the supplied files are technically defective and the issue cannot be resolved. Adapt this wording to the marketplace and local law before publishing.
-
+Because this is a digital download, refunds are offered only when the supplied files are technically defective and the issue cannot be resolved. Adapt this wording to the payment platform and applicable law before publishing.

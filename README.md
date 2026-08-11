@@ -34,7 +34,7 @@ node --test tests/rendered-html.test.mjs
 
 ## Checkout activation
 
-After the digital product is approved in Lemon Squeezy, set `NEXT_PUBLIC_CHECKOUT_URL` to its checkout URL and publish a new site version. See `sales-assets/store-activation-checklist.md`.
+After the Razorpay Payment Page and a tested ZIP-fulfilment process are ready, set `NEXT_PUBLIC_CHECKOUT_URL` to the live Payment Page URL and publish a new site version. See `sales-assets/store-activation-checklist.md`.
 
 ## Privacy model
 
