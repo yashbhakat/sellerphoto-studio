@@ -30,11 +30,16 @@ The standard scripts use POSIX-style environment assignment. On Windows, run the
 ```bash
 npm run build
 node --test tests/rendered-html.test.mjs
+npm run verify:release
 ```
+
+The GitHub Pages workflow also runs `verify:checkout`, which proves that both purchase buttons are either safely disabled or linked to the configured HTTPS checkout URL.
 
 ## Checkout activation
 
 After the Razorpay Payment Page and a tested ZIP-fulfilment process are ready, set `NEXT_PUBLIC_CHECKOUT_URL` to the live Payment Page URL and publish a new site version. See `sales-assets/store-activation-checklist.md`.
+
+The v1.0 manual delivery procedure and buyer message are in `sales-assets/manual-fulfilment-runbook.md`.
 
 ## Privacy model
 

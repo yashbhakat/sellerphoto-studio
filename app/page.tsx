@@ -6,8 +6,9 @@ export const metadata: Metadata = {
     "Batch-format product photos for Meesho, Amazon, Flipkart, Myntra, Instagram, and WhatsApp. Private, fast, and processed on your device.",
 };
 
-const checkoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL || "#launch-offer";
-const checkoutReady = Boolean(process.env.NEXT_PUBLIC_CHECKOUT_URL);
+const configuredCheckoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL?.trim();
+const checkoutUrl = configuredCheckoutUrl || "#launch-offer";
+const checkoutReady = Boolean(configuredCheckoutUrl);
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const checkoutTarget = checkoutReady ? "_blank" : undefined;
 const checkoutRel = checkoutReady ? "noopener noreferrer" : undefined;

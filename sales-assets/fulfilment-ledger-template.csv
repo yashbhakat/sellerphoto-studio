@@ -1,0 +1,1 @@
+payment_id,paid_at_utc,buyer_name,buyer_email,amount_inr,release_version,release_sha256,fulfilled_at_utc,fulfilment_channel,status,notes

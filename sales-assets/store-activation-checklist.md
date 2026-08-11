@@ -19,6 +19,8 @@ Razorpay Payment Pages accept the payment; this repository does not yet contain 
 
 Do not publish “instant download” wording unless the automated path is live and verified. For manual fulfilment, state a delivery timeframe in the Payment Page copy.
 
+Use `manual-fulfilment-runbook.md` for the v1.0 manual process. Make a private copy of `fulfilment-ledger-template.csv`; never commit customer data to this repository.
+
 ## Connect the checkout
 
 Set the GitHub Actions repository variable `NEXT_PUBLIC_CHECKOUT_URL` to the live Razorpay Payment Page URL, then rebuild and publish the site. The storefront will open checkout in a new tab.
