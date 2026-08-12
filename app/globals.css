@@ -104,6 +104,23 @@ footer { background: var(--ink); color: white; }.footer-inner { min-height: 150p
 
 .analytics-consent { position: fixed; z-index: 50; right: 22px; bottom: 22px; width: min(540px, calc(100% - 44px)); display: grid; grid-template-columns: 1fr auto; gap: 22px; align-items: end; padding: 22px; border: 1px solid var(--ink); border-radius: 18px; background: white; box-shadow: 8px 9px 0 var(--ink); }
 .analytics-consent strong { display: block; margin-bottom: 7px; font-size: 16px; }.analytics-consent p { margin: 0 0 8px; color: var(--muted); font-size: 13px; line-height: 1.5; }.analytics-consent a { font-size: 12px; font-weight: 750; border-bottom: 1px solid var(--ink); }.analytics-actions { display: flex; gap: 9px; }.analytics-actions button { min-height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 999px; font-weight: 800; cursor: pointer; white-space: nowrap; }.analytics-decline { background: white; }.analytics-accept { background: var(--green); }
+.analytics-privacy-links { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+
+.privacy-page { min-height: 100vh; background: var(--paper); }
+.privacy-back { font-size: 14px; }
+.privacy-content { max-width: 850px; padding-block: 76px 110px; }
+.privacy-content h1 { max-width: 760px; margin-bottom: 28px; }
+.privacy-intro { max-width: 760px; color: var(--muted); font-size: 20px; line-height: 1.7; }
+.privacy-content section { padding-block: 32px; border-top: 1px solid var(--line); }
+.privacy-content h2 { margin-bottom: 16px; font-size: 28px; letter-spacing: -.025em; }
+.privacy-content section p, .privacy-content li { color: var(--muted); font-size: 16px; line-height: 1.75; }
+.privacy-content section p:last-child { margin-bottom: 0; }
+.privacy-content section a { color: var(--ink); font-weight: 750; border-bottom: 1px solid var(--ink); }
+.privacy-content ul { margin: 0; padding-left: 22px; }
+.privacy-updated { margin-top: 28px; color: var(--muted); font-size: 13px; }
+.not-found-page { min-height: 100vh; display: grid; align-content: center; justify-items: start; padding-block: 80px; }
+.not-found-page h1 { margin-bottom: 20px; }
+.not-found-page p { margin-bottom: 30px; color: var(--muted); font-size: 18px; }
 
 @media (max-width: 950px) {
   .hero { grid-template-columns: 1fr; gap: 20px; padding-top: 60px; }.hero-visual { min-height: 520px; max-width: 620px; width: 100%; margin: auto; }

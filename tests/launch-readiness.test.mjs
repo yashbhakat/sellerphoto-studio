@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
 import { verifyReleaseArchive } from "../scripts/verify-release.mjs";
 import { verifyCheckoutHtml } from "../scripts/verify-static-checkout.mjs";
@@ -49,4 +49,39 @@ test("analytics requires consent and tracks checkout intent without advertising 
   assert.match(source, /ad_storage: "denied"/);
   assert.match(source, /allow_google_signals: false/);
   assert.match(source, /"begin_checkout"/);
+});
+
+test("privacy disclosure covers local processing, analytics location scope, and checkout", async () => {
+  const [privacy, workflow] = await Promise.all([
+    readFile(new URL("../app/privacy/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8"),
+  ]);
+  assert.match(privacy, /does not upload those files/);
+  assert.match(privacy, /approximate country or/);
+  assert.match(privacy, /does not receive precise GPS location/);
+  assert.match(privacy, /Razorpay-hosted payment page/);
+  assert.match(workflow, /vars\.NEXT_PUBLIC_BASE_PATH \|\| '\/sellerphoto-studio'/);
+  assert.match(workflow, /vars\.NEXT_PUBLIC_SITE_URL \|\| 'https:\/\/yashbhakat\.github\.io\/sellerphoto-studio'/);
+});
+
+test("SEO metadata and loading-critical assets stay optimized", async () => {
+  const [layout, page, nextConfig, hero, product, social] = await Promise.all([
+    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../next.config.ts", import.meta.url), "utf8"),
+    stat(new URL("../public/hero-marketplace.jpg", import.meta.url)),
+    stat(new URL("../public/seller-bag.jpg", import.meta.url)),
+    stat(new URL("../public/og.jpg", import.meta.url)),
+  ]);
+  assert.match(layout, /max-image-preview/);
+  assert.match(layout, /og\.jpg/);
+  assert.match(page, /FAQPage/);
+  assert.match(page, /hero-marketplace\.jpg/);
+  assert.match(page, /fetchPriority="high"/);
+  assert.match(page, /loading="lazy"/);
+  assert.match(nextConfig, /configuredBasePath === "__ROOT__"/);
+  assert.match(nextConfig, /trailingSlash: true/);
+  assert.ok(hero.size < 175_000, `hero image is ${hero.size} bytes`);
+  assert.ok(product.size < 300_000, `product image is ${product.size} bytes`);
+  assert.ok(social.size < 250_000, `social image is ${social.size} bytes`);
 });

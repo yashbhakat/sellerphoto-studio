@@ -9,7 +9,9 @@ export const metadata: Metadata = {
 const configuredCheckoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL?.trim();
 const checkoutUrl = configuredCheckoutUrl || "#launch-offer";
 const checkoutReady = Boolean(configuredCheckoutUrl);
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH === "__ROOT__"
+  ? ""
+  : process.env.NEXT_PUBLIC_BASE_PATH || "";
 const checkoutTarget = checkoutReady ? "_blank" : undefined;
 const checkoutRel = checkoutReady ? "noopener noreferrer" : undefined;
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -21,6 +23,10 @@ const softwareSchema = {
   applicationCategory: "DesignApplication",
   operatingSystem: "Any modern web browser",
   url: siteUrl,
+  image: `${siteUrl}/og.jpg`,
+  softwareVersion: "1.0",
+  inLanguage: "en-IN",
+  publisher: { "@type": "Organization", name: "SellerPhoto Studio" },
   description:
     "A private batch product-photo formatter for Amazon, Flipkart, Meesho, Myntra, Instagram, and WhatsApp sellers.",
   offers: {
@@ -28,7 +34,53 @@ const softwareSchema = {
     price: "499",
     priceCurrency: "INR",
     availability: "https://schema.org/InStock",
+    url: checkoutReady ? checkoutUrl : `${siteUrl}/#launch-offer`,
   },
+  featureList: [
+    "Batch product-photo formatting",
+    "Amazon, Flipkart, Meesho, Myntra, Instagram, and WhatsApp presets",
+    "On-device image processing",
+    "Logo, watermark, price badge, and ZIP export tools",
+  ],
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Are my photos uploaded anywhere?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Processing happens inside your browser, and the offline edition works without an internet connection.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does SellerPhoto Studio remove backgrounds with AI?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Not in the first edition. It creates consistent catalogue canvases and controls how each original photo fits inside them.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What devices does SellerPhoto Studio support?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Current versions of Chrome, Edge, Firefox, and Safari on desktop and mobile.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is SellerPhoto Studio a subscription?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. The launch edition is a one-time download with no usage fees.",
+      },
+    },
+  ],
 };
 
 const features = [
@@ -44,6 +96,10 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <nav className="site-nav shell" aria-label="Primary navigation">
         <a className="brand" href="#top" aria-label="SellerPhoto Studio home">
@@ -75,16 +131,16 @@ export default function Home() {
         </div>
 
         <div className="hero-visual" aria-label="Realistic before and after marketplace product photos">
-          <div className="visual-grid"><img src={`${basePath}/hero-marketplace.png`} alt="Skincare bottle, planter, and woven textile arranged for an online catalogue" /></div>
+          <div className="visual-grid"><img src={`${basePath}/hero-marketplace.jpg`} width="1536" height="1024" fetchPriority="high" decoding="async" alt="Skincare bottle, planter, and woven textile arranged for an online catalogue" /></div>
           <div className="photo-card photo-before">
             <div className="card-label">Before</div>
-            <img className="product-photo product-photo-before" src={`${basePath}/seller-bag.png`} alt="Original product photo of a handmade orange crossbody bag" />
+            <img className="product-photo product-photo-before" src={`${basePath}/seller-bag.jpg`} width="1254" height="1254" loading="lazy" decoding="async" alt="Original product photo of a handmade orange crossbody bag" />
             <span className="scribble">camera roll</span>
           </div>
           <div className="photo-card photo-after">
             <div className="card-label card-label-dark">Ready to sell</div>
             <div className="price-chip">₹799</div>
-            <img className="product-photo product-photo-after" src={`${basePath}/seller-bag.png`} alt="Marketplace-ready presentation of the handmade orange crossbody bag" />
+            <img className="product-photo product-photo-after" src={`${basePath}/seller-bag.jpg`} width="1254" height="1254" loading="lazy" decoding="async" alt="Marketplace-ready presentation of the handmade orange crossbody bag" />
             <div className="mini-brand">YOUR STORE</div>
           </div>
           <div className="batch-chip"><strong>12</strong><span>photos ready</span></div>
@@ -103,7 +159,7 @@ export default function Home() {
           <p>Your images never leave this page. Try the complete workflow with up to three photos, then download the full offline edition for larger batches.</p>
         </div>
         <div className="shell studio-frame-wrap">
-          <iframe className="studio-frame" src={`${basePath}/demo.html`} title="SellerPhoto Studio free demo" loading="eager" />
+          <iframe className="studio-frame" src={`${basePath}/demo.html`} title="SellerPhoto Studio free demo" loading="lazy" />
         </div>
       </section>
 
@@ -164,7 +220,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer><div className="shell footer-inner"><div className="brand brand-light"><span className="brand-mark">S</span><span>SellerPhoto Studio</span></div><p>Built for small sellers who would rather be selling. Not affiliated with any marketplace.</p><div className="footer-links"><button type="button" data-analytics-settings>Privacy &amp; analytics</button><a href="#top">Back to top ↑</a></div></div></footer>
+      <footer><div className="shell footer-inner"><div className="brand brand-light"><span className="brand-mark">S</span><span>SellerPhoto Studio</span></div><p>Built for small sellers who would rather be selling. Not affiliated with any marketplace.</p><div className="footer-links"><a href={`${basePath}/privacy/`}>Privacy</a><button type="button" data-analytics-settings>Analytics choices</button><a href="#top">Back to top ↑</a></div></div></footer>
     </main>
   );
 }

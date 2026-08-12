@@ -1,0 +1,84 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy",
+  description: "How SellerPhoto Studio handles product photos, analytics choices, approximate location data, and checkout.",
+  alternates: {
+    canonical: `${(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "")}/privacy/`,
+  },
+  robots: { index: true, follow: true },
+};
+
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH === "__ROOT__"
+  ? ""
+  : process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+export default function PrivacyPage() {
+  return (
+    <main className="privacy-page">
+      <nav className="site-nav shell" aria-label="Privacy navigation">
+        <a className="brand" href={`${basePath}/`} aria-label="SellerPhoto Studio home">
+          <span className="brand-mark" aria-hidden="true">S</span>
+          <span>SellerPhoto Studio</span>
+        </a>
+        <a className="text-link privacy-back" href={`${basePath}/`}>Back to the studio</a>
+      </nav>
+
+      <article className="privacy-content shell">
+        <div className="eyebrow">Plain-language privacy</div>
+        <h1>Your photos stay yours.</h1>
+        <p className="privacy-intro">
+          SellerPhoto Studio is designed to format product photos in your browser. This page explains what stays on
+          your device, what optional website analytics can measure, and what happens when you open checkout.
+        </p>
+
+        <section>
+          <h2>Product photos and the editor</h2>
+          <p>
+            Photos, logos, watermarks, settings, and exported images are processed on your device. SellerPhoto Studio
+            does not upload those files to its website or include their contents in Google Analytics.
+          </p>
+        </section>
+
+        <section>
+          <h2>Optional Google Analytics</h2>
+          <p>
+            Analytics loads only after you choose <strong>Allow analytics</strong>. It can report page visits, broad
+            device and browser information, interactions such as starting checkout, and an approximate country or
+            region derived from network information. It does not receive precise GPS location, product-photo contents,
+            or payment-card details.
+          </p>
+          <p>
+            Advertising storage, Google signals, and ad-personalisation signals are disabled. Your choice is stored in
+            this browser. Use <strong>Analytics choices</strong> in the site footer to review or change it.
+          </p>
+          <p>
+            Google processes permitted analytics data under its own
+            {" "}<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">privacy policy</a>.
+          </p>
+        </section>
+
+        <section>
+          <h2>Checkout and payment</h2>
+          <p>
+            Purchase buttons open a secure Razorpay-hosted payment page in a new tab. Payment and contact details you
+            enter there are handled by Razorpay under its own
+            {" "}<a href="https://razorpay.com/privacy/" target="_blank" rel="noopener noreferrer">privacy policy</a>.
+            SellerPhoto Studio does not place card or UPI credentials in website analytics.
+          </p>
+        </section>
+
+        <section>
+          <h2>Your choices</h2>
+          <ul>
+            <li>Decline analytics and continue using the public demo.</li>
+            <li>Change your analytics choice from the footer at any time.</li>
+            <li>Clear this site&apos;s browser storage to remove the saved consent choice.</li>
+          </ul>
+        </section>
+
+        <p className="privacy-updated">Last updated: 13 August 2026</p>
+      </article>
+    </main>
+  );
+}

@@ -43,6 +43,9 @@ function enableAnalytics(measurementId: string) {
 
 export default function AnalyticsConsent() {
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH === "__ROOT__"
+    ? ""
+    : process.env.NEXT_PUBLIC_BASE_PATH || "";
   const [choice, setChoice] = useState<ConsentChoice>("loading");
 
   useEffect(() => {
@@ -105,9 +108,12 @@ export default function AnalyticsConsent() {
           With your permission, Google Analytics helps us understand visits, approximate country or region,
           and which parts of the site are useful. Analytics cookies are not loaded unless you accept.
         </p>
-        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
-          Google privacy information
-        </a>
+        <span className="analytics-privacy-links">
+          <a href={`${basePath}/privacy/`}>Privacy details</a>
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
+            Google privacy information
+          </a>
+        </span>
       </div>
       <div className="analytics-actions">
         <button type="button" className="analytics-decline" onClick={decline}>No thanks</button>

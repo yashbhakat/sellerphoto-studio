@@ -43,4 +43,8 @@ The v1.0 manual delivery procedure and buyer message are in `sales-assets/manual
 
 ## Privacy model
 
-Product photos, logos, and exports are processed entirely in the buyer's browser. The app does not upload or persist them.
+Product photos, logos, and exports are processed entirely in the buyer's browser. The app does not upload or persist them. The storefront loads Google Analytics only after consent, disables advertising signals, and links to a plain-language privacy page covering approximate-location reporting and Razorpay checkout.
+
+## Custom-domain cutover
+
+The Pages workflow reads `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_BASE_PATH` from GitHub repository variables, with safe defaults for the current project URL. Keep the defaults while the custom domain is pending. At cutover, set the site URL to the HTTPS custom domain and set the base-path variable to `__ROOT__`, then deploy after DNS and GitHub Pages domain verification succeed. The sentinel is normalized to an empty base path during the build.
