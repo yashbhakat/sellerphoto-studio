@@ -53,7 +53,7 @@ export default function Home() {
         <div className="nav-links">
           <a href="#demo">Try it</a>
           <a href="#features">Features</a>
-          <a className="button button-small button-dark" href={checkoutUrl} target={checkoutTarget} rel={checkoutRel}>Get the full edition</a>
+          <a data-checkout-link className="button button-small button-dark" href={checkoutUrl} target={checkoutTarget} rel={checkoutRel}>Get the full edition</a>
         </div>
       </nav>
 
@@ -146,7 +146,7 @@ export default function Home() {
           <span className="launch-badge">FIRST 20 CUSTOMERS</span>
           <div className="price"><sup>₹</sup>499</div>
           <p className="price-note">One payment. No subscription.</p>
-          <a className="button button-primary button-wide" href={checkoutUrl} target={checkoutTarget} rel={checkoutRel}>Get SellerPhoto Studio <span>→</span></a>
+          <a data-checkout-link className="button button-primary button-wide" href={checkoutUrl} target={checkoutTarget} rel={checkoutRel}>Get SellerPhoto Studio <span>→</span></a>
           {checkoutReady
             ? <p className="checkout-note checkout-ready">Secure Razorpay checkout opens in a new tab.</p>
             : <p className="checkout-note">Secure checkout will open after store activation.</p>}
@@ -164,7 +164,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer><div className="shell footer-inner"><div className="brand brand-light"><span className="brand-mark">S</span><span>SellerPhoto Studio</span></div><p>Built for small sellers who would rather be selling. Not affiliated with any marketplace.</p><a href="#top">Back to top ↑</a></div></footer>
+      <footer><div className="shell footer-inner"><div className="brand brand-light"><span className="brand-mark">S</span><span>SellerPhoto Studio</span></div><p>Built for small sellers who would rather be selling. Not affiliated with any marketplace.</p><div className="footer-links"><button type="button" data-analytics-settings>Privacy &amp; analytics</button><a href="#top">Back to top ↑</a></div></div></footer>
     </main>
   );
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AnalyticsConsent from "./analytics-consent";
 import "./globals.css";
 
 export function generateMetadata(): Metadata {
@@ -34,5 +35,5 @@ export function generateMetadata(): Metadata {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="en"><body>{children}<AnalyticsConsent /></body></html>;
 }

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { verifyReleaseArchive } from "../scripts/verify-release.mjs";
 import { verifyCheckoutHtml } from "../scripts/verify-static-checkout.mjs";
@@ -39,4 +40,13 @@ test("checkout verification rejects placeholders and disabled output paired with
     () => verifyCheckoutHtml(disabledHtml, "https://rzp.io/rzp/real-checkout"),
     /purchase buttons/,
   );
+});
+
+test("analytics requires consent and tracks checkout intent without advertising signals", async () => {
+  const source = await readFile(new URL("../app/analytics-consent.tsx", import.meta.url), "utf8");
+  assert.match(source, /sellerphoto-analytics-consent/);
+  assert.match(source, /analytics_storage: "granted"/);
+  assert.match(source, /ad_storage: "denied"/);
+  assert.match(source, /allow_google_signals: false/);
+  assert.match(source, /"begin_checkout"/);
 });
