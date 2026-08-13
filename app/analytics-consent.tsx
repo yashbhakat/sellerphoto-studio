@@ -6,7 +6,7 @@ type ConsentChoice = "loading" | "pending" | "granted" | "denied";
 
 declare global {
   interface Window {
-    dataLayer?: unknown[][];
+    dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
   }
 }
@@ -15,8 +15,10 @@ const CONSENT_KEY = "sellerphoto-analytics-consent";
 
 function enableAnalytics(measurementId: string) {
   window.dataLayer = window.dataLayer || [];
-  window.gtag = window.gtag || function gtag(...args: unknown[]) {
-    window.dataLayer?.push(args);
+  window.gtag = window.gtag || function gtag() {
+    // Google Tag expects its command queue entries to be Arguments objects.
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer?.push(arguments);
   };
 
   window.gtag("consent", "default", {
