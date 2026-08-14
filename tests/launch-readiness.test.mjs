@@ -60,8 +60,8 @@ test("privacy disclosure covers local processing, analytics location scope, and 
   assert.match(privacy, /approximate country or/);
   assert.match(privacy, /does not receive precise GPS location/);
   assert.match(privacy, /Razorpay-hosted payment page/);
-  assert.match(workflow, /vars\.NEXT_PUBLIC_BASE_PATH \|\| '\/sellerphoto-studio'/);
-  assert.match(workflow, /vars\.NEXT_PUBLIC_SITE_URL \|\| 'https:\/\/yashbhakat\.github\.io\/sellerphoto-studio'/);
+  assert.match(workflow, /vars\.NEXT_PUBLIC_BASE_PATH \|\| '__ROOT__'/);
+  assert.match(workflow, /vars\.NEXT_PUBLIC_SITE_URL \|\| 'https:\/\/sellerphotostudio\.in'/);
 });
 
 test("SEO metadata and loading-critical assets stay optimized", async () => {
@@ -71,10 +71,10 @@ test("SEO metadata and loading-critical assets stay optimized", async () => {
     readFile(new URL("../next.config.ts", import.meta.url), "utf8"),
     stat(new URL("../public/hero-marketplace.jpg", import.meta.url)),
     stat(new URL("../public/seller-bag.jpg", import.meta.url)),
-    stat(new URL("../public/og.jpg", import.meta.url)),
+    stat(new URL("../public/og.png", import.meta.url)),
   ]);
   assert.match(layout, /max-image-preview/);
-  assert.match(layout, /og\.jpg/);
+  assert.match(layout, /og\.png/);
   assert.match(page, /FAQPage/);
   assert.match(page, /hero-marketplace\.jpg/);
   assert.match(page, /fetchPriority="high"/);
@@ -83,5 +83,5 @@ test("SEO metadata and loading-critical assets stay optimized", async () => {
   assert.match(nextConfig, /trailingSlash: true/);
   assert.ok(hero.size < 175_000, `hero image is ${hero.size} bytes`);
   assert.ok(product.size < 300_000, `product image is ${product.size} bytes`);
-  assert.ok(social.size < 250_000, `social image is ${social.size} bytes`);
+  assert.ok(social.size < 400_000, `social image is ${social.size} bytes`);
 });

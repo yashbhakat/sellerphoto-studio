@@ -7,7 +7,8 @@
   const $ = (id) => document.getElementById(id);
   const elements = {
     preset: $("preset"), background: $("background"), backgroundText: $("backgroundText"),
-    margin: $("margin"), marginValue: $("marginValue"), storeName: $("storeName"),
+    margin: $("margin"), marginValue: $("marginValue"), storeName: $("storeName"), skuPrefix: $("skuPrefix"),
+    includeManifest: $("includeManifest"),
     showPrice: $("showPrice"), priceText: $("priceText"), badgeColor: $("badgeColor"),
     logoInput: $("logoInput"), logoLabel: $("logoLabel"), removeLogo: $("removeLogo"),
     format: $("format"), quality: $("quality"), qualityValue: $("qualityValue"),
@@ -22,8 +23,8 @@
 
   const state = { items: [], activeId: null, logoUrl: null, previewUrl: null, renderToken: 0, exporting: false };
   const acceptedTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
-  const settingsInputs = [elements.preset, elements.background, elements.margin, elements.storeName,
-    elements.showPrice, elements.priceText, elements.badgeColor, elements.format, elements.quality];
+  const settingsInputs = [elements.preset, elements.background, elements.margin, elements.storeName, elements.skuPrefix,
+    elements.includeManifest, elements.showPrice, elements.priceText, elements.badgeColor, elements.format, elements.quality];
 
   elements.photoLimit.textContent = String(limit);
   if (mode === "pro") {
@@ -45,6 +46,8 @@
       background: elements.background.value,
       margin: Number(elements.margin.value),
       storeName: elements.storeName.value.trim(),
+      skuPrefix: elements.skuPrefix.value.trim(),
+      includeManifest: mode === "pro" && elements.includeManifest.checked,
       showPrice: elements.showPrice.checked,
       priceText: elements.priceText.value.trim(),
       badgeColor: elements.badgeColor.value,
@@ -81,6 +84,8 @@
       if (/^#[0-9a-f]{6}$/i.test(saved.background)) elements.background.value = saved.background;
       if (Number.isFinite(saved.margin)) elements.margin.value = String(saved.margin);
       if (typeof saved.storeName === "string") elements.storeName.value = saved.storeName;
+      if (typeof saved.skuPrefix === "string") elements.skuPrefix.value = saved.skuPrefix;
+      if (mode === "pro" && typeof saved.includeManifest === "boolean") elements.includeManifest.checked = saved.includeManifest;
       if (typeof saved.showPrice === "boolean") elements.showPrice.checked = saved.showPrice;
       if (typeof saved.priceText === "string") elements.priceText.value = saved.priceText;
       if (/^#[0-9a-f]{6}$/i.test(saved.badgeColor)) elements.badgeColor.value = saved.badgeColor;
@@ -295,19 +300,26 @@
   async function exportBatch() {
     if (!state.items.length || state.exporting) return;
     state.exporting = true; renderQueue(); elements.progressTrack.hidden = false; elements.progressBar.style.width = "0%";
-    const options = readOptions(), entries = [], usedNames = new Set();
+    const options = readOptions(), entries = [], manifestRows = [["source_name", "output_filename", "width", "height", "format", "sku_prefix"]], usedNames = new Set();
     try {
       for (let index = 0; index < state.items.length; index += 1) {
         const item = state.items[index]; setStatus(`Formatting ${index + 1} of ${state.items.length}: ${item.name}`);
         const canvas = await drawOutput(item, options, false), blob = await canvasToBlob(canvas, options);
-        let base = `${safeBaseName(item.name, index)}-${options.width}x${options.height}`, suffix = 2;
-        while (usedNames.has(base)) base = `${safeBaseName(item.name, index)}-${options.width}x${options.height}-${suffix++}`;
-        usedNames.add(base); entries.push({ name: `${base}.${options.format === "png" ? "png" : "jpg"}`, bytes: new Uint8Array(await blob.arrayBuffer()) });
+        const sku = options.skuPrefix ? `${safeBaseName(options.skuPrefix, index)}-` : "";
+        let base = `${sku}${safeBaseName(item.name, index)}-${options.width}x${options.height}`, suffix = 2;
+        while (usedNames.has(base)) base = `${sku}${safeBaseName(item.name, index)}-${options.width}x${options.height}-${suffix++}`;
+        const outputName = `${base}.${options.format === "png" ? "png" : "jpg"}`;
+        usedNames.add(base); entries.push({ name: outputName, bytes: new Uint8Array(await blob.arrayBuffer()) });
+        manifestRows.push([item.name, outputName, options.width, options.height, options.format.toUpperCase(), options.skuPrefix]);
         elements.progressBar.style.width = `${Math.round(((index + 1) / state.items.length) * 92)}%`;
+      }
+      if (options.includeManifest) {
+        const csv = manifestRows.map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(",")).join("\r\n");
+        entries.push({ name: "sellerphoto-export-manifest.csv", bytes: new TextEncoder().encode(csv) });
       }
       setStatus("Packing your ZIP…"); const zip = createZip(entries); elements.progressBar.style.width = "100%";
       const url = URL.createObjectURL(zip), link = document.createElement("a"); link.href = url; link.download = `SellerPhotoStudio-${new Date().toISOString().slice(0, 10)}.zip`; document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
-      setStatus(`${entries.length} finished photo${entries.length === 1 ? "" : "s"} downloaded.`, "success");
+      setStatus(`${state.items.length} finished photo${state.items.length === 1 ? "" : "s"} downloaded.`, "success");
     } catch (error) { setStatus(error.message || "The batch could not be exported.", "error"); }
     finally { state.exporting = false; renderQueue(); setTimeout(() => { elements.progressTrack.hidden = true; elements.progressBar.style.width = "0%"; }, 1100); }
   }
@@ -326,5 +338,6 @@
   elements.removeLogo.addEventListener("click", () => { if (state.logoUrl) URL.revokeObjectURL(state.logoUrl); state.logoUrl = null; elements.logoInput.value = ""; elements.logoLabel.textContent = "Choose PNG or JPG"; elements.removeLogo.hidden = true; schedulePreview(); });
   window.addEventListener("beforeunload", () => { state.items.forEach((item) => URL.revokeObjectURL(item.url)); if (state.logoUrl) URL.revokeObjectURL(state.logoUrl); if (state.previewUrl) URL.revokeObjectURL(state.previewUrl); });
 
+  if (mode !== "pro") { elements.includeManifest.checked = false; elements.includeManifest.disabled = true; }
   restoreSettings(); syncLabels(); renderQueue();
 })();

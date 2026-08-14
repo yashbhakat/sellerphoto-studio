@@ -21,7 +21,10 @@
         <section class="control-group">
           <label class="field-label" for="preset">Marketplace size</label>
           <select id="preset">
-            <option value="1200x1200">Marketplace square · 1200 × 1200</option>
+            <option value="1500x1500">Amazon / Flipkart high-res · 1500 × 1500</option>
+            <option value="1200x1200">Meesho / marketplace square · 1200 × 1200</option>
+            <option value="1200x1200">Blinkit / Zepto / Instamart · 1200 × 1200</option>
+            <option value="1600x1600">D2C / Shopify high-res · 1600 × 1600</option>
             <option value="1080x1080">Instagram / WhatsApp · 1080 × 1080</option>
             <option value="1080x1350">Instagram portrait · 1080 × 1350</option>
             <option value="1080x1920">Story / Status · 1080 × 1920</option>
@@ -51,6 +54,17 @@
         <section class="control-group">
           <label class="field-label" for="storeName">Store name / watermark</label>
           <input id="storeName" type="text" maxlength="36" placeholder="e.g. Mahi Home Store" />
+        </section>
+
+        <section class="control-group">
+          <label class="field-label" for="skuPrefix">SKU / filename prefix</label>
+          <input id="skuPrefix" type="text" maxlength="28" placeholder="e.g. MHS-BAG-01" />
+          <small class="field-hint">Added to every export filename for faster catalogue uploads.</small>
+        </section>
+
+        <section class="control-group">
+          <div class="toggle-row"><label for="includeManifest">Catalogue manifest CSV <span class="pro-chip">PRO</span></label><input id="includeManifest" type="checkbox" checked /></div>
+          <small class="field-hint">Maps each source image to its exported filename, size, format and SKU prefix.</small>
         </section>
 
         <section class="control-group">

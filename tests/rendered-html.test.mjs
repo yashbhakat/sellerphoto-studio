@@ -21,7 +21,7 @@ test("server-renders the finished SellerPhoto Studio storefront", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
   assert.match(html, /SellerPhoto Studio/);
-  assert.match(html, /Turn everyday photos into a/);
+  assert.match(html, /Better product photos/);
   assert.match(html, /Try 3 photos free/);
   assert.match(html, /FIRST 20 CUSTOMERS/);
   assert.match(html, /src="\/demo\.html"/);
@@ -44,6 +44,8 @@ test("ships a limited public demo and a full offline product", async () => {
   assert.match(studio, /function createZip/);
   assert.match(studio, /image\/jpeg/);
   assert.match(studio, /image\/png/);
+  assert.match(studio, /skuPrefix/);
+  assert.match(demo, /Blinkit \/ Zepto \/ Instamart/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await Promise.all([
     access(new URL("product/README.txt", root)),

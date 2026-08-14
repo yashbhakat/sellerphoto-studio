@@ -1,122 +1,122 @@
-# SellerPhoto Studio organic launch kit
-
-Live destination: https://yashbhakat.github.io/sellerphoto-studio/
+# SellerPhoto Studio — revenue-first organic launch kit
 
 ## Positioning
 
-SellerPhoto Studio is the privacy-first batch product-photo formatter for Indian marketplace sellers. It turns everyday phone photos into consistent, marketplace-ready images without accounts, uploads, subscriptions, or recurring AI costs.
+**Promise:** Better product photos. Clearer profit.
 
-Primary audience: independent sellers and catalogue operators listing on Amazon, Flipkart, Meesho, Myntra, Instagram, and WhatsApp.
+SellerPhoto Studio is a private, browser-based product-photo formatter plus a free seller economics hub for Indian marketplace, quick-commerce, D2C, app and social sellers. The free calculators create search demand; the ₹499 launch offer converts sellers who need repeatable catalogue production.
 
-Primary call to action: **Try 3 photos free in your browser.**
+## Conversion path
 
-Launch offer: **₹499 one time** for the full offline edition, limited to the first 20 customers. Do not publish the purchase CTA until the hosted Razorpay checkout is active.
+1. Seller discovers a calculator, image guide or short tutorial.
+2. Free tool answers an immediate pricing or catalogue question.
+3. The page demonstrates the private 3-photo workflow.
+4. Pro is offered as the production upgrade: 50-photo batches, channel presets, branding, SKU-aware filenames, manifest CSV, ZIP export and offline use.
+5. Checkout intent is measured through consent-aware analytics.
 
-## Channel priority
+## Audience priority
 
-1. Instagram Reels and YouTube Shorts: show a 10–20 second before/batch/after workflow.
-2. LinkedIn: founder-style build story and practical catalogue tips aimed at marketplace operators, agencies, and D2C founders.
-3. WhatsApp Business: Status posts and opt-in seller groups where product/tool sharing is allowed.
-4. Facebook seller and D2C groups: educational posts first; include the link only where group rules permit.
-5. Quora and relevant Reddit communities: answer real product-photography questions transparently and disclose that you built the tool.
-6. Marketplace communities: contribute useful answers; never cold-promote where solicitation is prohibited.
+| Priority | Seller segment | Immediate problem | Lead magnet | Paid reason |
+|---|---|---|---|---|
+| 1 | Marketplace sellers on Amazon, Flipkart, Meesho and Myntra | Inconsistent catalogue images and unclear margin | Marketplace profit calculator | Process a launch or refresh in batches |
+| 2 | Quick-commerce brands selling through Blinkit, Zepto or Instamart | Tight contribution margin and small-screen catalogue clarity | Quick-commerce margin calculator | Channel preset, repeatable SKU naming and manifest |
+| 3 | D2C / Shopify / ONDC sellers | Payment, ad and fulfilment costs; branded catalogue work | Seller economics calculator | Brand controls and offline batch production |
+| 4 | Seller agencies and catalogue operators | Repetitive work across multiple stores | Product photo size guide | 50-photo jobs, ZIPs and organised filenames |
+| 5 | Instagram and WhatsApp sellers | Phone photos look inconsistent | 3-photo demo | Square, portrait and story exports without subscription |
 
-## Launch post — LinkedIn
+## Campaign URLs
 
-I built a small tool for online sellers who spend too much time resizing the same product photos.
+- Homepage: https://sellerphotostudio.in/?utm_source=organic&utm_medium=profile&utm_campaign=launch
+- Marketplace calculator: https://sellerphotostudio.in/tools/marketplace-profit-calculator/?utm_source=community&utm_medium=answer&utm_campaign=seller_tools
+- Quick-commerce calculator: https://sellerphotostudio.in/tools/quick-commerce-margin-calculator/?utm_source=linkedin&utm_medium=post&utm_campaign=quick_commerce
+- Product image guide: https://sellerphotostudio.in/resources/product-photo-size-guide/?utm_source=search&utm_medium=content&utm_campaign=image_guide
 
-SellerPhoto Studio formats a whole batch for Amazon, Flipkart, Meesho, Myntra, Instagram, and WhatsApp. It runs in the browser, keeps photos on the seller's device, and needs no account.
+Use a specific `utm_content` value for every post, such as `amazon_forum_margin`, `linkedin_qcommerce_01`, or `instagram_before_after_02`.
 
-You can try the full workflow with 3 photos free: [LINKEDIN_UTM]
+## First 14 days
 
-If you manage product catalogues, I would love to know which repetitive image task costs you the most time.
+### Days 1–3: proof and indexing
 
-#ecommerce #marketplacesellers #d2c #amazonindia #flipkartseller #meeshoseller
+- Submit the sitemap in Google Search Console and Bing Webmaster Tools.
+- Request indexing for the homepage, both calculators and the image guide.
+- Add the homepage link to the founder/business LinkedIn, Instagram, YouTube and WhatsApp Business profiles.
+- Publish one screen recording: phone photo → channel preset → SKU filename → ZIP.
+- Post the calculator first, with a worked example and the disclaimer that sellers must replace sample assumptions with their own terms.
 
-## Launch post — Instagram / Facebook
+### Days 4–7: problem-led content
 
-Still resizing product photos one by one? 📦
+- Publish “Why revenue is not profit for marketplace sellers.”
+- Publish a quick-commerce margin example showing the impact of promotions and wastage.
+- Publish a product-photo checklist for small phone screens.
+- Answer relevant public questions on seller forums, Quora and Reddit with a complete useful answer before linking to the matching free tool.
+- Ask five opted-in seller contacts for usability feedback; do not mass-DM or scrape personal details.
 
-SellerPhoto Studio formats, brands, and exports an entire product batch for Amazon, Flipkart, Meesho, Myntra, Instagram, and WhatsApp—right in your browser.
+### Days 8–14: conversion and partnership
 
-✓ Try 3 photos free
-✓ No sign-up
-✓ Photos stay on your device
-✓ Full edition is a one-time purchase
+- Share a real before/after catalogue batch and the time saved.
+- Offer the launch price to the first 20 buyers without inventing scarcity or sales numbers.
+- Approach catalogue service providers, product photographers and ecommerce consultants with an affiliate/referral proposal only after the owner approves the exact message.
+- Publish a founder post comparing subscription editing tools with the one-time offline workflow.
+- Turn the three best audience questions into new FAQ entries or calculator presets.
 
-Try it: [INSTAGRAM_UTM]
+## Ready-to-post copy
 
-#onlineseller #amazonindiaseller #flipkartseller #meeshoseller #myntraseller #productphotography #ecommerceindia #smallbusinessindia
+### LinkedIn: marketplace sellers
 
-## WhatsApp Status sequence
+A product can be profitable on paper and still lose money after platform fees, fulfilment, ads and returns. I built a free adjustable seller profit calculator for Indian marketplace sellers, plus a private photo workflow for preparing catalogue images in batches. The sample values are illustrative—replace them with your own agreement before making a pricing decision.
 
-1. “Online sellers: how long did your last product-photo batch take?”
-2. “I built a private browser tool that formats up to 50 photos together.”
-3. “Try 3 photos free — no sign-up, no upload: [WHATSAPP_UTM]”
+Calculator: https://sellerphotostudio.in/tools/marketplace-profit-calculator/?utm_source=linkedin&utm_medium=post&utm_campaign=seller_tools&utm_content=marketplace_margin_01
 
-## Short-video script (15 seconds)
+### LinkedIn: quick commerce
 
-- 0–3s: Screen recording of a messy camera-roll product shot. Text: “Listing 20 products today?”
-- 3–8s: Drop three images into SellerPhoto Studio and choose a square preset.
-- 8–12s: Show consistent branded outputs. Text: “Format the batch once.”
-- 12–15s: “Try 3 free. Photos stay on your device.” plus the URL.
+Quick-commerce pricing gets uncomfortable when promotions, fulfilment and wastage are treated as afterthoughts. This free calculator puts those assumptions in one view and shows contribution per order, margin and break-even price. It also links to a practical product-photo workflow for Blinkit, Zepto, Instamart and similar channels.
 
-## Helpful post ideas
+Tool: https://sellerphotostudio.in/tools/quick-commerce-margin-calculator/?utm_source=linkedin&utm_medium=post&utm_campaign=quick_commerce&utm_content=margin_01
 
-- “Five reasons marketplace catalogues look inconsistent—and the 10-minute fix.”
-- “Square vs portrait product images: a simple export checklist.”
-- “How to prepare 50 catalogue images without uploading client products to another service.”
-- “A phone-photo workflow for Meesho and WhatsApp sellers.”
-- “Why consistent padding matters across an Amazon or Flipkart product grid.”
-- “Behind the build: making a product-photo tool work fully offline.”
+### Community answer ending
 
-## 14-day organic schedule
+I made an adjustable version here if it helps: [matching free tool URL]. The starting figures are examples, not marketplace fee quotes, so replace every field with your current terms. I’m the maker of the tool.
 
-| Day | Channel | Asset | Goal |
-|---|---|---|---|
-| 1 | LinkedIn | Founder launch post | Initial reach and feedback |
-| 2 | Instagram Reel | 15-second before/after | Demonstrate speed |
-| 3 | WhatsApp Status | Three-frame sequence | Warm-network trials |
-| 4 | Facebook group | Educational checklist | Credibility; link only if allowed |
-| 5 | LinkedIn | Product-photo consistency tip | Searchable expertise |
-| 6 | YouTube Short | Batch workflow | Evergreen discovery |
-| 7 | Instagram carousel | Five catalogue mistakes | Saves and shares |
-| 8 | Quora | Answer one relevant question | High-intent discovery |
-| 9 | LinkedIn | Privacy/offline angle | Differentiate the product |
-| 10 | WhatsApp | Customer/result screenshot | Social proof, with permission |
-| 11 | Instagram Reel | Amazon/Flipkart preset demo | Marketplace relevance |
-| 12 | Facebook group | Free 3-photo workflow tutorial | Qualified trials |
-| 13 | YouTube Short | Branding and watermark demo | Feature education |
-| 14 | LinkedIn | Learnings + launch offer reminder | Conversion |
+### Short video caption
 
-## Search keywords
+3 product photos. One channel preset. Consistent canvas, store branding, SKU filenames and a ZIP ready for the catalogue team. The free demo runs locally in your browser; Pro handles up to 50 photos per batch. https://sellerphotostudio.in/?utm_source=instagram&utm_medium=reel&utm_campaign=launch&utm_content=batch_demo_01
 
-High intent: product photo editor for sellers, Amazon product image editor India, Flipkart listing image maker, Meesho catalogue photo maker, Myntra product image formatter, marketplace image resizer, batch product photo editor, offline product photo editor.
+### Opt-in outreach draft
 
-Problem aware: resize product images in bulk, make product photos same size, add logo to many product photos, product catalogue image size, prepare product photos for ecommerce.
+Hi [Name] — I’m building SellerPhoto Studio for small online sellers: a private batch photo formatter plus free margin calculators. Your work in [specific public context] looked relevant. Would you be open to testing the 3-photo demo and telling me where the workflow slows you down? No pitch required; if it is useful, the launch edition is ₹499. https://sellerphotostudio.in/?utm_source=direct&utm_medium=outreach&utm_campaign=feedback&utm_content=[segment]
 
-## Tracking links
+## 30-day content engine
 
-Replace the placeholders in the posts with these links:
+Repeat this weekly rhythm for four weeks:
 
-- LinkedIn: `https://yashbhakat.github.io/sellerphoto-studio/?utm_source=linkedin&utm_medium=organic&utm_campaign=launch`
-- Instagram: `https://yashbhakat.github.io/sellerphoto-studio/?utm_source=instagram&utm_medium=organic&utm_campaign=launch`
-- WhatsApp: `https://yashbhakat.github.io/sellerphoto-studio/?utm_source=whatsapp&utm_medium=organic&utm_campaign=launch`
-- Facebook: `https://yashbhakat.github.io/sellerphoto-studio/?utm_source=facebook&utm_medium=organic&utm_campaign=launch`
-- YouTube: `https://yashbhakat.github.io/sellerphoto-studio/?utm_source=youtube&utm_medium=organic&utm_campaign=launch`
+- Monday: calculator example with one changed assumption.
+- Tuesday: 20–30 second photo workflow screen recording.
+- Wednesday: product-image or catalogue checklist.
+- Thursday: founder lesson, buyer question or mini case study.
+- Friday: direct launch-offer CTA with an honest feature comparison.
+- Saturday: answer three relevant public seller questions.
+- Sunday: review analytics and make one landing-page improvement.
 
-## Outreach guardrails
+Repurpose each core idea into one LinkedIn post, one Instagram carousel/reel, one YouTube Short, one WhatsApp Status and one useful forum answer. Change the framing instead of posting identical text everywhere.
 
-- Post only in communities that permit tools, self-promotion, or resource links.
-- Lead with a useful tip or tutorial, disclose that you built the tool, and avoid pretending to be an independent reviewer.
-- Do not scrape seller details, mass-DM strangers, or automate unsolicited messages.
-- Never imply endorsement by Amazon, Flipkart, Meesho, Myntra, Meta, or WhatsApp.
-- Ask customers before using their names, shops, photos, or results as proof.
-- Track trials and purchases by UTM source; keep the channels that produce qualified visits.
+## Metrics and decisions
 
-## Official audience references
+Track weekly:
 
-- Amazon India seller portal: https://sell.amazon.in/
-- Flipkart seller portal: https://seller.flipkart.com/
-- Meesho supplier portal: https://supplier.meesho.com/
-- Myntra partner portal: https://partners.myntrainfo.com/
+- Organic sessions by landing page and UTM source.
+- Calculator-to-demo clicks.
+- Demo-to-checkout clicks.
+- Checkout completion from the Razorpay dashboard.
+- Revenue per 100 landing-page visits.
+- Search impressions and click-through rate for each tool page.
+- Questions or objections repeated by at least three sellers.
+
+After 200 qualified visits, improve the weakest conversion step. If calculator traffic is high but checkout intent is low, add a stronger batch-work example. If checkout intent is high but purchases are low, inspect payment trust, delivery timing and refund wording.
+
+## Promotion safeguards
+
+- No scraped email lists, automated DMs, fake reviews, undisclosed affiliate posts or copied community content.
+- Identify yourself as the maker when linking in communities.
+- Follow each platform’s self-promotion rules.
+- Do not quote platform fees as universal; use the seller’s current agreement.
+- Actual posts, DMs, emails, partnership requests and ad spend require owner approval immediately before sending.

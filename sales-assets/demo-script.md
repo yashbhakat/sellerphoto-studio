@@ -1,26 +1,25 @@
 # 30-second demo script
 
 **0–4 seconds**
-Show a messy folder of product photos.
+Show a folder with inconsistent product photos.
 Voice/text: “Listing products should not mean editing the same image fifty times.”
 
 **4–9 seconds**
 Drag several images into SellerPhoto Studio.
-Voice/text: “Drop your product photos into one private, offline tool.”
+Voice/text: “Drop product photos into one private, offline tool.”
 
-**9–17 seconds**
-Switch between marketplace sizes, Fit and Fill, and background colours.
-Voice/text: “Choose the marketplace size and set a consistent catalogue look once.”
+**9–16 seconds**
+Switch from Amazon / Flipkart to Blinkit / Zepto / Instamart, then adjust Fit and the background.
+Voice/text: “Choose a selling-channel preset and set the catalogue look once.”
 
-**17–23 seconds**
-Add the store name, price badge, and logo.
-Voice/text: “Add your price and branding in a few clicks.”
+**16–22 seconds**
+Add a store name, logo and SKU prefix.
+Voice/text: “Apply your branding and organised SKU filenames in a few clicks.”
 
-**23–28 seconds**
-Click Download ZIP and reveal the finished folder.
-Voice/text: “Export the entire batch together—ready to post.”
+**22–27 seconds**
+Click Download ZIP and reveal the finished images plus `sellerphoto-export-manifest.csv`.
+Voice/text: “Export the batch with a catalogue manifest—ready for the listing workflow.”
 
-**28–30 seconds**
+**27–30 seconds**
 Show the product name and launch price.
-On-screen text: “SellerPhoto Studio · Launch edition ₹499 · No subscription.”
-
+On-screen text: “SellerPhoto Studio Pro · ₹499 launch edition · No subscription.”
