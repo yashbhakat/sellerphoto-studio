@@ -71,11 +71,12 @@ test("privacy disclosure covers local processing, analytics location scope, and 
   assert.match(workflow, /vars\.NEXT_PUBLIC_SITE_URL \|\| 'https:\/\/sellerphotostudio\.in'/);
 });
 
-test("automated fulfilment is server-verified and private by construction", async () => {
-  const [worker, checkout, download, privacy, schema, config] = await Promise.all([
+test("automated fulfilment and administrator access are server-verified and private by construction", async () => {
+  const [worker, checkout, download, admin, privacy, schema, config] = await Promise.all([
     readFile(new URL("../fulfilment-worker/src/index.mjs", import.meta.url), "utf8"),
     readFile(new URL("../app/checkout-button.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/download/download-access.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/admin/admin-access.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/privacy/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../fulfilment-worker/migrations/0001_secure_fulfilment.sql", import.meta.url), "utf8"),
     readFile(new URL("../fulfilment-worker/wrangler.example.jsonc", import.meta.url), "utf8"),
@@ -86,12 +87,20 @@ test("automated fulfilment is server-verified and private by construction", asyn
   assert.match(worker, /X-Razorpay-Signature/);
   assert.match(worker, /download_count < max_downloads/);
   assert.match(worker, /env\.PRODUCTS\.get/);
+  assert.match(worker, /\/api\/admin\/login/);
+  assert.match(worker, /verifyAdminSessionToken/);
+  assert.match(worker, /env\.ADMIN_PASSWORD/);
+  assert.match(worker, /admin-ip:/);
   assert.match(checkout, /checkout\.razorpay\.com\/v1\/checkout\.js/);
   assert.match(checkout, /\/api\/payments\/verify/);
   assert.match(download, /Authorization: `Bearer \$\{token\}`/);
+  assert.match(admin, /sessionStorage\.setItem\(TOKEN_KEY/);
+  assert.match(admin, /\/api\/admin\/download/);
+  assert.doesNotMatch(admin, /ADMIN_PASSWORD|ADMIN_SESSION_SECRET/);
   assert.match(privacy, /one-way keyed hash/);
   assert.match(schema, /CREATE UNIQUE INDEX `idx_entitlements_order_id`/);
   assert.match(config, /"PRODUCT_AMOUNT": "49900"/);
+  assert.match(config, /"ADMIN_USERNAME": "admin"/);
   assert.doesNotMatch(config, /key_secret|RAZORPAY_KEY_SECRET"\s*:/i);
 });
 

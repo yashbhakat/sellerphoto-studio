@@ -1,12 +1,15 @@
 import {
   allowedOrigin,
+  constantTimeEqual,
   corsHeaders,
+  createAdminSessionToken,
   createDownloadToken,
   hmacSha256,
   integerSetting,
   isRazorpayId,
   sha256,
   validateIdempotencyKey,
+  verifyAdminSessionToken,
   verifyDownloadToken,
   verifyPaymentSignature,
   verifyWebhookSignature,
@@ -40,6 +43,97 @@ function requireBrowserOrigin(request, env) {
 function basicAuth(env) {
   if (!env.RAZORPAY_KEY_ID || !env.RAZORPAY_KEY_SECRET) throw new Error("Razorpay credentials are not configured");
   return `Basic ${btoa(`${env.RAZORPAY_KEY_ID}:${env.RAZORPAY_KEY_SECRET}`)}`;
+}
+
+function adminConfiguration(env) {
+  const username = String(env.ADMIN_USERNAME || "").trim().toLowerCase();
+  const password = String(env.ADMIN_PASSWORD || "");
+  const sessionSecret = String(env.ADMIN_SESSION_SECRET || "");
+  if (!username || !password || !sessionSecret) throw new Error("Admin access is not configured");
+  return { username, password, sessionSecret };
+}
+
+async function adminLogin(request, env) {
+  const origin = requireBrowserOrigin(request, env);
+  const body = await readJson(request, origin);
+  const suppliedUsername = typeof body.username === "string" ? body.username.trim().toLowerCase() : "";
+  const suppliedPassword = typeof body.password === "string" ? body.password : "";
+  if (!suppliedUsername || suppliedUsername.length > 120 || !suppliedPassword || suppliedPassword.length > 200) {
+    return apiError("Enter the admin username and password.", 400, origin, "invalid_admin_login");
+  }
+
+  const { username, password, sessionSecret } = adminConfiguration(env);
+  const now = Math.floor(Date.now() / 1000);
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const ipHash = await hmacSha256(env.DOWNLOAD_SIGNING_SECRET, `admin-ip:${ip}`);
+  const recent = await env.DB.prepare("SELECT COUNT(*) AS total FROM checkout_attempts WHERE client_hash = ? AND created_at >= ?")
+    .bind(ipHash, now - 900).first();
+  if (Number(recent?.total || 0) >= 12) {
+    return apiError("Too many admin login attempts. Wait 15 minutes and try again.", 429, origin, "admin_rate_limited", { "Retry-After": "900" });
+  }
+  await env.DB.prepare("INSERT INTO checkout_attempts (client_hash, created_at) VALUES (?, ?)").bind(ipHash, now).run();
+
+  const [suppliedUsernameHash, configuredUsernameHash, suppliedPasswordHash, configuredPasswordHash] = await Promise.all([
+    sha256(suppliedUsername),
+    sha256(username),
+    sha256(suppliedPassword),
+    sha256(password),
+  ]);
+  if (!constantTimeEqual(suppliedUsernameHash, configuredUsernameHash) || !constantTimeEqual(suppliedPasswordHash, configuredPasswordHash)) {
+    return apiError("The admin username or password is incorrect.", 401, origin, "invalid_admin_credentials");
+  }
+
+  const expiresAt = now + 28_800;
+  const token = await createAdminSessionToken(username, expiresAt, sessionSecret);
+  return json({
+    ok: true,
+    token,
+    expiresAt,
+    username,
+    releaseVersion: env.PRODUCT_VERSION || "1.0.0",
+    checksum: env.PRODUCT_SHA256 || "",
+  }, 200, origin);
+}
+
+async function requireAdmin(request, env) {
+  const origin = requireBrowserOrigin(request, env);
+  const { username, sessionSecret } = adminConfiguration(env);
+  const authorization = request.headers.get("Authorization") || "";
+  const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+  const checked = await verifyAdminSessionToken(token, username, sessionSecret);
+  return { origin, username, checked };
+}
+
+async function adminStatus(request, env) {
+  const { origin, username, checked } = await requireAdmin(request, env);
+  if (!checked.valid) {
+    return apiError(checked.reason === "expired" ? "The admin session has expired." : "Admin sign-in is required.", 401, origin, checked.reason === "expired" ? "admin_session_expired" : "admin_unauthorized");
+  }
+  return json({
+    ok: true,
+    username,
+    expiresAt: checked.expiresAt,
+    releaseVersion: env.PRODUCT_VERSION || "1.0.0",
+    checksum: env.PRODUCT_SHA256 || "",
+  }, 200, origin);
+}
+
+async function adminDownload(request, env) {
+  const { origin, checked } = await requireAdmin(request, env);
+  if (!checked.valid) {
+    return apiError(checked.reason === "expired" ? "The admin session has expired." : "Admin sign-in is required.", 401, origin, checked.reason === "expired" ? "admin_session_expired" : "admin_unauthorized");
+  }
+  const product = await env.PRODUCTS.get(env.PRODUCT_KEY);
+  if (!product) return apiError("The product archive is temporarily unavailable.", 503, origin, "product_unavailable");
+  const headers = new Headers(corsHeaders(origin));
+  product.writeHttpMetadata(headers);
+  headers.set("Content-Type", "application/zip");
+  headers.set("Content-Disposition", `attachment; filename="${env.PRODUCT_FILENAME || "SellerPhotoStudio-v1.0.0.zip"}"`);
+  headers.set("Content-Length", String(product.size));
+  headers.set("Cache-Control", "no-store, private");
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("X-Product-SHA256", env.PRODUCT_SHA256 || "");
+  return new Response(product.body, { headers });
 }
 
 async function razorpayRequest(env, path, init = {}) {
@@ -238,6 +332,9 @@ const worker = {
       if (request.method === "POST" && url.pathname === "/api/payments/verify") return await verifyPayment(request, env);
       if (request.method === "POST" && url.pathname === "/api/entitlements/status") return await entitlementStatus(request, env);
       if (request.method === "POST" && url.pathname === "/api/download") return await downloadProduct(request, env);
+      if (request.method === "POST" && url.pathname === "/api/admin/login") return await adminLogin(request, env);
+      if (request.method === "POST" && url.pathname === "/api/admin/status") return await adminStatus(request, env);
+      if (request.method === "POST" && url.pathname === "/api/admin/download") return await adminDownload(request, env);
       if (request.method === "POST" && url.pathname === "/api/webhooks/razorpay") return await handleWebhook(request, env);
       return json({ ok: false, error: "not_found" }, 404);
     } catch (error) {

@@ -13,9 +13,11 @@ Production controls:
 - exact-origin CORS and a hashed-IP checkout-attempt limit;
 - no card/UPI data or promotional email process.
 
-Required Worker secrets (never commit values): `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, and `DOWNLOAD_SIGNING_SECRET`.
+Required Worker secrets (never commit values): `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `DOWNLOAD_SIGNING_SECRET`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET`.
 
-Provisioning is intentionally separate from source control. Copy `wrangler.example.jsonc` to `wrangler.jsonc`, replace the D1 database ID, create the private R2 bucket, apply `migrations/`, upload the reviewed release ZIP to `PRODUCT_KEY`, set all four secrets, deploy, and add the resulting HTTPS Worker URL to the GitHub repository variable `NEXT_PUBLIC_FULFILMENT_API_URL`.
+Provisioning is intentionally separate from source control. Copy `wrangler.example.jsonc` to `wrangler.jsonc`, replace the D1 database ID, create the private R2 bucket, apply `migrations/`, upload the reviewed release ZIP to `PRODUCT_KEY`, set all six secrets, deploy, and add the resulting HTTPS Worker URL to the GitHub repository variable `NEXT_PUBLIC_FULFILMENT_API_URL`.
+
+The private `/admin/` storefront route signs in through the Worker, keeps its eight-hour session token in tab-scoped storage, and can stream the reviewed Pro ZIP without creating a payment. The admin password and session-signing secret exist only as encrypted Worker secrets.
 
 Configure Razorpay to send `payment.captured`, `payment.refunded`, and `refund.processed` events to:
 

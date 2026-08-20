@@ -3,9 +3,11 @@ import test from "node:test";
 import {
   constantTimeEqual,
   corsHeaders,
+  createAdminSessionToken,
   createDownloadToken,
   hmacSha256,
   validateIdempotencyKey,
+  verifyAdminSessionToken,
   verifyDownloadToken,
   verifyPaymentSignature,
   verifyWebhookSignature,
@@ -35,6 +37,17 @@ test("signed download passes reject tampering and expiration", async () => {
   assert.deepEqual(await verifyDownloadToken(token, secret, 1_900_000_000), { valid: true, entitlementId, expiresAt });
   assert.equal((await verifyDownloadToken(token.replace("ent_0", "ent_1"), secret, 1_900_000_000)).valid, false);
   assert.deepEqual(await verifyDownloadToken(token, secret, expiresAt), { valid: false, reason: "expired", entitlementId, expiresAt });
+});
+
+test("admin sessions are signed, scoped to the configured user, and expire", async () => {
+  const username = "admin";
+  const secret = "admin_session_secret";
+  const expiresAt = 2_000_000_000;
+  const token = await createAdminSessionToken(username, expiresAt, secret);
+  assert.deepEqual(await verifyAdminSessionToken(token, username, secret, 1_900_000_000), { valid: true, expiresAt });
+  assert.equal((await verifyAdminSessionToken(token, "another-admin", secret, 1_900_000_000)).valid, false);
+  assert.equal((await verifyAdminSessionToken(`${token}0`, username, secret, 1_900_000_000)).valid, false);
+  assert.deepEqual(await verifyAdminSessionToken(token, username, secret, expiresAt), { valid: false, reason: "expired", expiresAt });
 });
 
 test("checkout attempt IDs and exact-origin CORS stay constrained", () => {

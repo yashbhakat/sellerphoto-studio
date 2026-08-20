@@ -61,6 +61,29 @@ export async function verifyDownloadToken(token, signingSecret, now = Math.floor
   return { valid: true, entitlementId, expiresAt };
 }
 
+export async function createAdminSessionToken(username, expiresAt, sessionSecret) {
+  if (typeof username !== "string" || !username || username.length > 120 || !Number.isSafeInteger(expiresAt)) {
+    throw new Error("Invalid admin session input");
+  }
+  const signature = await hmacSha256(sessionSecret, `admin.${username}.${expiresAt}`);
+  return `adm.${expiresAt}.${signature}`;
+}
+
+export async function verifyAdminSessionToken(token, username, sessionSecret, now = Math.floor(Date.now() / 1000)) {
+  if (typeof token !== "string" || token.length > 180 || typeof username !== "string" || !username || !sessionSecret) {
+    return { valid: false, reason: "invalid" };
+  }
+  const [prefix, expiresText, signature, extra] = token.split(".");
+  const expiresAt = Number(expiresText);
+  if (prefix !== "adm" || extra !== undefined || !Number.isSafeInteger(expiresAt) || !/^[a-f0-9]{64}$/i.test(signature || "")) {
+    return { valid: false, reason: "invalid" };
+  }
+  const expected = await hmacSha256(sessionSecret, `admin.${username}.${expiresAt}`);
+  if (!constantTimeEqual(expected, signature.toLowerCase())) return { valid: false, reason: "invalid" };
+  if (expiresAt <= now) return { valid: false, reason: "expired", expiresAt };
+  return { valid: true, expiresAt };
+}
+
 export function isRazorpayId(value, prefix) {
   return typeof value === "string" && new RegExp(`^${prefix}_[A-Za-z0-9]{8,40}$`).test(value);
 }
