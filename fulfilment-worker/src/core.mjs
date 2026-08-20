@@ -61,27 +61,31 @@ export async function verifyDownloadToken(token, signingSecret, now = Math.floor
   return { valid: true, entitlementId, expiresAt };
 }
 
-export async function createAdminSessionToken(username, expiresAt, sessionSecret) {
-  if (typeof username !== "string" || !username || username.length > 120 || !Number.isSafeInteger(expiresAt)) {
+export async function createAdminSessionToken(username, sessionId, expiresAt, sessionSecret) {
+  if (typeof username !== "string" || !username || username.length > 120 || !isAdminSessionId(sessionId) || !Number.isSafeInteger(expiresAt)) {
     throw new Error("Invalid admin session input");
   }
-  const signature = await hmacSha256(sessionSecret, `admin.${username}.${expiresAt}`);
-  return `adm.${expiresAt}.${signature}`;
+  const signature = await hmacSha256(sessionSecret, `admin.${username}.${sessionId}.${expiresAt}`);
+  return `adm.${sessionId}.${expiresAt}.${signature}`;
 }
 
 export async function verifyAdminSessionToken(token, username, sessionSecret, now = Math.floor(Date.now() / 1000)) {
   if (typeof token !== "string" || token.length > 180 || typeof username !== "string" || !username || !sessionSecret) {
     return { valid: false, reason: "invalid" };
   }
-  const [prefix, expiresText, signature, extra] = token.split(".");
+  const [prefix, sessionId, expiresText, signature, extra] = token.split(".");
   const expiresAt = Number(expiresText);
-  if (prefix !== "adm" || extra !== undefined || !Number.isSafeInteger(expiresAt) || !/^[a-f0-9]{64}$/i.test(signature || "")) {
+  if (prefix !== "adm" || extra !== undefined || !isAdminSessionId(sessionId) || !Number.isSafeInteger(expiresAt) || !/^[a-f0-9]{64}$/i.test(signature || "")) {
     return { valid: false, reason: "invalid" };
   }
-  const expected = await hmacSha256(sessionSecret, `admin.${username}.${expiresAt}`);
+  const expected = await hmacSha256(sessionSecret, `admin.${username}.${sessionId}.${expiresAt}`);
   if (!constantTimeEqual(expected, signature.toLowerCase())) return { valid: false, reason: "invalid" };
-  if (expiresAt <= now) return { valid: false, reason: "expired", expiresAt };
-  return { valid: true, expiresAt };
+  if (expiresAt <= now) return { valid: false, reason: "expired", sessionId, expiresAt };
+  return { valid: true, sessionId, expiresAt };
+}
+
+export function isAdminSessionId(value) {
+  return typeof value === "string" && /^ads_[a-f0-9]{32}$/.test(value);
 }
 
 export function isRazorpayId(value, prefix) {

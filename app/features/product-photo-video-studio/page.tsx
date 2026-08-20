@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PRODUCT } from "../../../config/product.mjs";
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH === "__ROOT__" ? "" : process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -26,12 +27,12 @@ export default function ProductPhotoVideoStudioPage() {
     "@context": "https://schema.org", "@type": "SoftwareApplication", name: "SellerPhoto Studio Product Photo and Video Studio",
     applicationCategory: "MultimediaApplication", operatingSystem: "Any modern web browser",
     description: "An on-device batch product photo editor, pre-upload inspector and short product video generator for online sellers.",
-    offers: { "@type": "Offer", price: "499", priceCurrency: "INR" }, url: siteUrl + "/features/product-photo-video-studio/",
+    offers: { "@type": "Offer", price: String(PRODUCT.priceInr), priceCurrency: PRODUCT.currency }, url: siteUrl + "/features/product-photo-video-studio/",
   };
   return <main className="resource-page feature-detail-page">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
     <nav className="site-nav resource-nav shell"><a className="brand" href={basePath + "/"}><span className="brand-mark">S</span><span>SellerPhoto Studio</span></a><a className="button button-small button-dark" href={basePath + "/#launch-offer"}>Get Pro</a></nav>
-    <header className="resource-hero feature-detail-hero shell"><div className="eyebrow">Paid media tools · Image + video</div><h1>One controlled media workflow for every product listing.</h1><p>Prepare consistent product images with conservative channel presets and switchable treatments, inspect likely upload problems, then turn the same catalogue photos into short product videos.</p><div className="hero-actions"><a className="button button-primary" href={basePath + "/#launch-offer"}>Get the ₹499 Pro suite</a><a className="text-link" href={basePath + "/#demo"}>Try 3 photos free →</a></div></header>
+    <header className="resource-hero feature-detail-hero shell"><div className="eyebrow">Paid media tools · Image + video</div><h1>One controlled media workflow for every product listing.</h1><p>Prepare consistent product images with conservative channel presets and switchable treatments, inspect likely upload problems, then turn the same catalogue photos into short product videos.</p><div className="hero-actions"><a className="button button-primary" href={basePath + "/#launch-offer"}>Get the ₹{PRODUCT.priceInr} Pro suite</a><a className="text-link" href={basePath + "/#demo"}>Try 3 photos free →</a></div></header>
 
     <section className="feature-detail-band"><div className="shell detail-metric-grid"><article><strong>50</strong><p>Photos per batch with one consistent setup.</p></article><article><strong>9</strong><p>Channel and placement image presets.</p></article><article><strong>13</strong><p>Image treatments and operations with direct controls.</p></article><article><strong>12</strong><p>Product scenes per generated video.</p></article></div></section>
 
@@ -47,6 +48,6 @@ export default function ProductPhotoVideoStudioPage() {
     </section>
 
     <section className="shell feature-disclaimer"><strong>Platform requirements change</strong><p>Presets are conservative workflow starting points, not certification. Always review the current requirements inside your marketplace account and category before publishing an image or video.</p></section>
-    <section className="feature-detail-cta"><div className="shell"><div><span>Included in SellerPhoto Studio Pro 1.1</span><h2>Build the image. Add motion. Forecast the SKU.</h2></div><a className="button button-primary" href={basePath + "/#launch-offer"}>Get the full Pro suite →</a></div></section>
+    <section className="feature-detail-cta"><div className="shell"><div><span>Included in SellerPhoto Studio Pro {PRODUCT.version}</span><h2>Build the image. Add motion. Forecast the SKU.</h2></div><a className="button button-primary" href={basePath + "/#launch-offer"}>Get the full Pro suite →</a></div></section>
   </main>;
 }

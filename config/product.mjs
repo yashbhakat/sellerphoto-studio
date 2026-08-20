@@ -1,0 +1,15 @@
+export const PRODUCT = Object.freeze({
+  name: "SellerPhoto Studio Pro",
+  version: "1.1.0",
+  amountMinor: 49_900,
+  priceInr: 499,
+  regularPriceInr: 799,
+  currency: "INR",
+  filename: "SellerPhotoStudio-v1.1.0.zip",
+  r2Key: "seller-photo-studio/v1.1.0/SellerPhotoStudio-v1.1.0.zip",
+  sha256: "50257132C4FAC9EF007158A6FFDE395453E5E4742DFEFC42145CFC2F6F4EC00A",
+  analyticsItemId: "sellerphoto-v1.1",
+  checkoutRecoveryStorageKey: "sellerphoto-checkout-recovery",
+  downloadTtlSeconds: 604_800,
+  maxDownloads: 3,
+});

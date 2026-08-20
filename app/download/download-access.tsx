@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PRODUCT } from "../../config/product.mjs";
 
 type Access = {
   expiresAt: number;
@@ -20,18 +21,57 @@ export default function DownloadAccess({ apiUrl, homeHref }: { apiUrl?: string; 
     async function verifyAccess() {
       await Promise.resolve();
       const fragment = new URLSearchParams(window.location.hash.slice(1));
-      const accessToken = fragment.get("token") || sessionStorage.getItem("sellerphoto-download-token") || "";
+      let accessToken = fragment.get("token") || sessionStorage.getItem("sellerphoto-download-token") || "";
+      if (window.location.hash) history.replaceState(null, "", `${location.pathname}${location.search}`);
       if (!apiUrl) {
         if (!cancelled) setMessage("Secure delivery is not active on this deployment yet.");
         return;
       }
       if (!accessToken) {
-        if (!cancelled) setMessage("No download pass was found. Complete payment from the SellerPhoto Studio checkout first.");
-        return;
+        let recoveryKey = "";
+        try {
+          const saved = JSON.parse(localStorage.getItem(PRODUCT.checkoutRecoveryStorageKey) || "null");
+          const recentEnough = Number(saved?.createdAt) > Date.now() - (PRODUCT.downloadTtlSeconds + 86_400) * 1000;
+          if (recentEnough && typeof saved?.idempotencyKey === "string") recoveryKey = saved.idempotencyKey;
+          else localStorage.removeItem(PRODUCT.checkoutRecoveryStorageKey);
+        } catch {
+          localStorage.removeItem(PRODUCT.checkoutRecoveryStorageKey);
+        }
+        if (recoveryKey) {
+          if (!cancelled) setMessage("Recovering your verified purchase from this browser…");
+          for (let attempt = 0; attempt < 6 && !accessToken; attempt += 1) {
+            let response: Response;
+            try {
+              response = await fetch(`${apiUrl}/api/entitlements/recover`, {
+                method: "POST",
+                credentials: "omit",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ idempotencyKey: recoveryKey }),
+              });
+            } catch {
+              if (!cancelled) setMessage("Purchase recovery could not reach the secure delivery service. Refresh to retry.");
+              return;
+            }
+            const payload = await response.json().catch(() => ({}));
+            if (response.ok && payload.token) {
+              accessToken = payload.token;
+              break;
+            }
+            if (response.status !== 202) {
+              if (/expired|refunded|revoked/i.test(payload.message || "")) localStorage.removeItem(PRODUCT.checkoutRecoveryStorageKey);
+              if (!cancelled) setMessage(payload.message || "This purchase could not be recovered automatically.");
+              return;
+            }
+            await new Promise((resolve) => window.setTimeout(resolve, 1_500 + attempt * 750));
+          }
+        }
+        if (!accessToken) {
+          if (!cancelled) setMessage(recoveryKey ? "Payment is still settling. Keep this page open and refresh in a minute." : "No download pass was found. Complete payment from the SellerPhoto Studio checkout first.");
+          return;
+        }
       }
       sessionStorage.setItem("sellerphoto-download-token", accessToken);
       if (!cancelled) setToken(accessToken);
-      history.replaceState(null, "", `${location.pathname}${location.search}`);
       try {
         const response = await fetch(`${apiUrl}/api/entitlements/status`, {
           method: "POST",
@@ -43,6 +83,10 @@ export default function DownloadAccess({ apiUrl, homeHref }: { apiUrl?: string; 
         if (!response.ok) throw new Error(payload.message || "This download pass is unavailable.");
         if (!cancelled) { setAccess(payload); setMessage(""); }
       } catch (error) {
+        if (error instanceof Error && /expired|refunded|revoked/i.test(error.message)) {
+          sessionStorage.removeItem("sellerphoto-download-token");
+          localStorage.removeItem(PRODUCT.checkoutRecoveryStorageKey);
+        }
         if (!cancelled) setMessage(error instanceof Error ? error.message : "This download pass is unavailable.");
       }
     }
@@ -68,7 +112,7 @@ export default function DownloadAccess({ apiUrl, homeHref }: { apiUrl?: string; 
       const objectUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = objectUrl;
-      link.download = "SellerPhotoStudio-v1.1.0.zip";
+      link.download = `SellerPhotoStudio-v${access?.releaseVersion || PRODUCT.version}.zip`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -97,7 +141,7 @@ export default function DownloadAccess({ apiUrl, homeHref }: { apiUrl?: string; 
     {access ? <>
       <p className="download-intro">SellerPhoto Studio v{access.releaseVersion} is ready as a private offline ZIP. Product photos remain on your device.</p>
       <dl className="download-details">
-        <div><dt>Downloads remaining</dt><dd>{access.downloadsRemaining} of 3</dd></div>
+        <div><dt>Downloads remaining</dt><dd>{access.downloadsRemaining} of {PRODUCT.maxDownloads}</dd></div>
         <div><dt>Link expires</dt><dd>{new Date(access.expiresAt * 1000).toLocaleString("en-IN")}</dd></div>
         <div><dt>SHA-256</dt><dd className="checksum">{access.checksum}</dd></div>
       </dl>
@@ -105,7 +149,7 @@ export default function DownloadAccess({ apiUrl, homeHref }: { apiUrl?: string; 
       <button className="download-copy" type="button" onClick={copyRecoveryLink}>Copy private recovery link</button>
     </> : null}
     {message ? <p className="download-message">{message}</p> : null}
-    <p className="download-safety">Never share the recovery link: it grants access to the paid ZIP. It expires after seven days and allows no more than three downloads.</p>
+    <p className="download-safety">Never share the recovery link: it grants access to the paid ZIP. It expires after seven days and allows no more than {PRODUCT.maxDownloads} downloads. If checkout is interrupted, this browser can recover the purchase automatically.</p>
     <a className="text-link" href={homeHref}>Back to SellerPhoto Studio →</a>
   </section>;
 }

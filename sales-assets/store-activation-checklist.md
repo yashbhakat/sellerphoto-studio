@@ -25,7 +25,7 @@ Keep `NEXT_PUBLIC_CHECKOUT_URL` set to the live Razorpay Payment Page while prov
 - Complete a Razorpay test-mode payment through Standard Checkout; do not make a real charge merely to test code.
 - Confirm the payment appears in Razorpay and contains the buyer details needed for fulfilment.
 - Confirm signature verification rejects an altered payment ID and a non-captured payment cannot obtain a token.
-- Confirm the protected page displays the correct v1.0 checksum and streams the ZIP only with a valid pass.
+- Confirm the protected page displays the correct v1.1 checksum and streams the ZIP only with a valid pass.
 - Confirm the fourth download fails, an expired pass fails, and a refund webhook revokes access.
 - Download and extract the ZIP on another device.
 - Open `index.html`, process three photos, and confirm the result ZIP opens correctly.

@@ -11,8 +11,8 @@
 
 ## Release controls
 
-- Version: 1.0.0
-- R2 key: `seller-photo-studio/v1.0.0/SellerPhotoStudio-v1.0.0.zip`
+- Version: 1.1.0
+- R2 key: `seller-photo-studio/v1.1.0/SellerPhotoStudio-v1.1.0.zip`
 - SHA-256: `10BD48C4280EF95ACD51DBCE3372BF145727929AD5FC067770525436AC098E58`
 - Expected contents: `index.html`, `README.txt`, `studio.css`, `studio.js`
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PRODUCT } from "../../config/product.mjs";
 
 export const metadata: Metadata = {
   title: "Privacy",
@@ -66,14 +67,16 @@ export default function PrivacyPage() {
             status, amount, currency, and a cryptographic payment signature. Card and UPI credentials remain with
             Razorpay under its own
             {" "}<a href="https://razorpay.com/privacy/" target="_blank" rel="noopener noreferrer">privacy policy</a>.
-            SellerPhoto Studio verifies a captured ₹499 INR payment before issuing a time-limited download pass. It
+            SellerPhoto Studio verifies a captured ₹{PRODUCT.priceInr} {PRODUCT.currency} payment before issuing a time-limited download pass. It
             does not place payment credentials, payment IDs, or download-pass values in website analytics.
           </p>
           <p>
             Fulfilment records store the minimum operational data needed to prevent duplicate delivery and handle
             refunds: order/payment identifiers, product version, timestamps, status, and download count. Checkout rate
             limiting uses a one-way keyed hash of the network address rather than storing the raw address. A private
-            recovery token can be held temporarily in this browser session after payment.
+            cryptographically random recovery pass is stored on this device after checkout starts so an interrupted
+            captured payment can be recovered without an external email service. Analytics is not loaded on admin or
+            protected-download routes.
           </p>
         </section>
 
@@ -82,12 +85,12 @@ export default function PrivacyPage() {
           <ul>
             <li>Decline analytics and continue using the public demo.</li>
             <li>Change your analytics choice from the footer at any time.</li>
-            <li>Clear this site&apos;s browser storage to remove the saved consent choice.</li>
+            <li>Clear this site&apos;s browser storage to remove the saved consent choice and any same-device checkout recovery pass.</li>
             <li>Keep a paid download recovery link private; anyone holding it can use the remaining downloads until expiry.</li>
           </ul>
         </section>
 
-        <p className="privacy-updated">Last updated: 15 August 2026</p>
+        <p className="privacy-updated">Last updated: 21 August 2026</p>
       </article>
     </main>
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PRODUCT } from "../../../config/product.mjs";
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH === "__ROOT__" ? "" : process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -31,12 +32,12 @@ export default function ProductLifetimeForecastingPage() {
     "@context": "https://schema.org", "@type": "SoftwareApplication", name: "SellerPhoto Studio Product Lifecycle Forecast Lab",
     applicationCategory: "BusinessApplication", operatingSystem: "Any modern web browser",
     description: "A product lifetime revenue, profit, cash-flow, scenario and sensitivity forecasting tool for online sellers.",
-    offers: { "@type": "Offer", price: "499", priceCurrency: "INR" }, url: siteUrl + "/features/product-lifetime-forecasting/",
+    offers: { "@type": "Offer", price: String(PRODUCT.priceInr), priceCurrency: PRODUCT.currency }, url: siteUrl + "/features/product-lifetime-forecasting/",
   };
   return <main className="resource-page feature-detail-page">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
     <nav className="site-nav resource-nav shell"><a className="brand" href={basePath + "/"}><span className="brand-mark">S</span><span>SellerPhoto Studio</span></a><a className="button button-small button-dark" href={basePath + "/#launch-offer"}>Get Pro</a></nav>
-    <header className="resource-hero feature-detail-hero shell"><div className="eyebrow">Paid analytics · Forecast lab</div><h1>Forecast a product from first stock to lifetime profit.</h1><p>Build a month-by-month commercial model for a marketplace, quick-commerce or D2C product. Test demand, pricing, returns, fees, advertising, costs and inventory before committing more cash.</p><div className="hero-actions"><a className="button button-primary" href={basePath + "/#launch-offer"}>Get the ₹499 Pro suite</a><a className="text-link" href={basePath + "/tools/marketplace-profit-calculator/"}>Try the free unit calculator →</a></div></header>
+    <header className="resource-hero feature-detail-hero shell"><div className="eyebrow">Paid analytics · Forecast lab</div><h1>Forecast a product from first stock to lifetime profit.</h1><p>Build a month-by-month commercial model for a marketplace, quick-commerce or D2C product. Test demand, pricing, returns, fees, advertising, costs and inventory before committing more cash.</p><div className="hero-actions"><a className="button button-primary" href={basePath + "/#launch-offer"}>Get the ₹{PRODUCT.priceInr} Pro suite</a><a className="text-link" href={basePath + "/tools/marketplace-profit-calculator/"}>Try the free unit calculator →</a></div></header>
 
     <section className="feature-detail-band"><div className="shell detail-metric-grid">{metrics.map(([number, text]) => <article key={number}><strong>{number}</strong><p>{text}</p></article>)}</div></section>
 
@@ -52,6 +53,6 @@ export default function ProductLifetimeForecastingPage() {
     </section>
 
     <section className="shell feature-disclaimer"><strong>Important planning note</strong><p>The Forecast Lab is an assumption-driven planning tool, not a guarantee of demand, sales or profit and not financial advice. Marketplace terms, taxes and category economics vary. Validate inputs against your agreements and actual performance.</p></section>
-    <section className="feature-detail-cta"><div className="shell"><div><span>Included in SellerPhoto Studio Pro 1.1</span><h2>Forecast the economics. Then build the media.</h2></div><a className="button button-primary" href={basePath + "/#launch-offer"}>Get the full Pro suite →</a></div></section>
+    <section className="feature-detail-cta"><div className="shell"><div><span>Included in SellerPhoto Studio Pro {PRODUCT.version}</span><h2>Forecast the economics. Then build the media.</h2></div><a className="button button-primary" href={basePath + "/#launch-offer"}>Get the full Pro suite →</a></div></section>
   </main>;
 }

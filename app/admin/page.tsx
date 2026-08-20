@@ -4,7 +4,8 @@ import AdminAccess from "./admin-access";
 export const metadata: Metadata = {
   title: "Admin access",
   description: "Secure SellerPhoto Studio administrator access.",
-  robots: { index: false, follow: false },
+  robots: { index: false, follow: false, noarchive: true, nosnippet: true },
+  referrer: "no-referrer",
 };
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH === "__ROOT__" ? "" : process.env.NEXT_PUBLIC_BASE_PATH || "";

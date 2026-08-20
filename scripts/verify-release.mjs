@@ -4,9 +4,9 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { inflateRawSync } from "node:zlib";
+import { PRODUCT } from "../config/product.mjs";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
-const releaseVersion = "1.1.0";
 const expectedFiles = ["README.txt", "forecast.js", "index.html", "studio.css", "studio.js", "video.js"];
 
 function findEndOfCentralDirectory(archive) {
@@ -55,8 +55,8 @@ function extractEntry(archive, name, entry) {
 }
 
 export async function verifyReleaseArchive({
-  archivePath = join(projectRoot, "releases", "SellerPhotoStudio-v" + releaseVersion + ".zip"),
-  checksumPath = join(projectRoot, "releases", "SellerPhotoStudio-v" + releaseVersion + ".sha256"),
+  archivePath = join(projectRoot, "releases", PRODUCT.filename),
+  checksumPath = join(projectRoot, "releases", `SellerPhotoStudio-v${PRODUCT.version}.sha256`),
   productDir = join(projectRoot, "product"),
 } = {}) {
   const [archive, checksumManifest] = await Promise.all([readFile(archivePath), readFile(checksumPath, "utf8")]);
@@ -75,5 +75,5 @@ export async function verifyReleaseArchive({
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const result = await verifyReleaseArchive();
-  console.log("Verified SellerPhotoStudio-v" + releaseVersion + ".zip (" + result.files.length + " files, SHA-256 " + result.sha256 + ").");
+  console.log(`Verified ${PRODUCT.filename} (${result.files.length} files, SHA-256 ${result.sha256}).`);
 }

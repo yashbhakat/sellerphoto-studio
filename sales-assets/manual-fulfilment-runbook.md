@@ -1,12 +1,12 @@
-# SellerPhoto Studio v1.0 manual fulfilment runbook
+# SellerPhoto Studio v1.1 manual fulfilment runbook
 
 Use this procedure for the first 20 customers unless an automated webhook-to-delivery flow has been implemented and tested. Razorpay confirms payment; this process delivers the product.
 
 ## Approved release
 
 - Product: SellerPhoto Studio — Full Offline Edition
-- Version: 1.0.0
-- File: `releases/SellerPhotoStudio-v1.0.0.zip`
+- Version: 1.1.0
+- File: `releases/SellerPhotoStudio-v1.1.0.zip`
 - SHA-256: `10BD48C4280EF95ACD51DBCE3372BF145727929AD5FC067770525436AC098E58`
 - Expected ZIP contents: `index.html`, `README.txt`, `studio.css`, `studio.js`
 
@@ -35,20 +35,20 @@ Run `npm run verify:release` before sending the file. Do not rename, rebuild, or
 1. Open the Razorpay Dashboard directly. Do not fulfil from a screenshot, forwarded email, or buyer claim.
 2. Confirm the payment is successful/captured, the amount is ₹499, and the payment ID has not already been fulfilled.
 3. Record the payment ID, paid time, buyer email, release version, and status in the private ledger.
-4. Run `npm run verify:release` and attach `SellerPhotoStudio-v1.0.0.zip` to the buyer message below.
+4. Run `npm run verify:release` and attach `SellerPhotoStudio-v1.1.0.zip` to the buyer message below.
 5. Send from the monitored fulfilment mailbox to the email collected by Razorpay.
 6. Record the sent time and mark the order `fulfilled`.
 7. If delivery fails, retain the error in the private ledger and retry only after confirming the buyer address.
 
 ## Buyer email
 
-Subject: Your SellerPhoto Studio v1.0 download
+Subject: Your SellerPhoto Studio v1.1 download
 
 Hello [BUYER_NAME],
 
 Thank you for purchasing SellerPhoto Studio.
 
-Your SellerPhoto Studio v1.0 ZIP is attached. Extract the ZIP, then open `index.html` in Chrome, Edge, Firefox, or Safari. The included `README.txt` contains the quick-start steps.
+Your SellerPhoto Studio v1.1 ZIP is attached. Extract the ZIP, then open `index.html` in Microsoft Edge, Chrome, Firefox, or Safari. The included `README.txt` contains the quick-start steps.
 
 Release checksum (SHA-256):
 `10BD48C4280EF95ACD51DBCE3372BF145727929AD5FC067770525436AC098E58`

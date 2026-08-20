@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Secure Pro Download",
   description: "Retrieve a verified SellerPhoto Studio Pro purchase.",
   robots: { index: false, follow: false, noarchive: true },
+  referrer: "no-referrer",
 };
 
 export default function DownloadPage() {

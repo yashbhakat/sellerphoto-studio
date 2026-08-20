@@ -17,7 +17,7 @@ type Assumptions = {
   monthlyOrders: number;
 };
 
-type SellerEconomicsCalculatorProps = {
+export type SellerEconomicsCalculatorProps = {
   defaultChannel?: ChannelKey;
   purchaseHref?: string;
   purchaseApiUrl?: string;

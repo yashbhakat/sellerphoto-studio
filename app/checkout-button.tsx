@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type MouseEvent, type ReactNode } from "react";
+import { PRODUCT } from "../config/product.mjs";
 
 type PaymentResult = {
   razorpay_order_id: string;
@@ -94,8 +95,10 @@ export default function CheckoutButton({
     setMessage("");
     setState("opening");
     try {
+      const idempotencyKey = newAttemptId();
+      localStorage.setItem(PRODUCT.checkoutRecoveryStorageKey, JSON.stringify({ idempotencyKey, createdAt: Date.now() }));
       const [orderResult] = await Promise.all([
-        apiRequest(apiUrl!, "/api/orders", { idempotencyKey: newAttemptId() }),
+        apiRequest(apiUrl!, "/api/orders", { idempotencyKey }),
         loadRazorpay(),
       ]);
       if (!orderResult.response.ok) throw new Error(orderResult.payload.message || "Checkout could not start.");
@@ -106,7 +109,7 @@ export default function CheckoutButton({
         amount: order.amount,
         currency: order.currency,
         name: order.name,
-        description: order.description,
+        description: order.description || PRODUCT.name,
         order_id: order.orderId,
         handler: async (payment) => {
           setState("verifying");

@@ -30,7 +30,10 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
       - run: npm run build:static
+      - run: npm run harden:static
       - run: npm run verify:checkout
       - run: npm run verify:release
       - run: npm run test:launch

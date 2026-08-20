@@ -4,6 +4,7 @@
   "main": "src/index.mjs",
   "compatibility_date": "2026-08-15",
   "observability": { "enabled": true },
+  "triggers": { "crons": ["17 3 * * *"] },
   "vars": {
     "ALLOWED_ORIGIN": "https://sellerphotostudio.in",
     "FRONTEND_URL": "https://sellerphotostudio.in",

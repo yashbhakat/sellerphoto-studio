@@ -11,6 +11,8 @@ SellerPhoto Studio is an offline-first product media and commercial planning sui
 - JPG and PNG batch output, a dependency-free ZIP exporter, catalogue manifest, forecast CSV and printable report;
 - protected Razorpay fulfilment backed by Cloudflare Worker, D1 and private R2 storage.
 
+The production topology and ownership boundaries are documented in `ARCHITECTURE.md`.
+
 ## Product release
 
 The sale-ready archive is releases/SellerPhotoStudio-v1.1.0.zip.

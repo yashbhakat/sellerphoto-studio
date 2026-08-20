@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import CheckoutButton from "./checkout-button";
-import SellerEconomicsCalculator from "./seller-tools";
+import SellerEconomicsCalculator from "./lazy-seller-tools";
+import { PRODUCT } from "../config/product.mjs";
 
 export const metadata: Metadata = {
   title: "Product Photo, Video & Revenue Forecast Tools for Sellers",
@@ -36,7 +37,7 @@ const softwareSchema = {
   inLanguage: "en-IN",
   publisher: { "@type": "Organization", name: "SellerPhoto Studio", url: siteUrl },
   description: "An on-device product media and commercial planning suite for Indian marketplace, quick-commerce, D2C and social sellers.",
-  offers: { "@type": "Offer", price: "499", priceCurrency: "INR", availability: "https://schema.org/InStock", url: configuredFulfilmentApiUrl ? siteUrl + "/#launch-offer" : checkoutReady ? checkoutUrl : siteUrl + "/#launch-offer" },
+  offers: { "@type": "Offer", price: String(PRODUCT.priceInr), priceCurrency: PRODUCT.currency, availability: "https://schema.org/InStock", url: configuredFulfilmentApiUrl ? siteUrl + "/#launch-offer" : checkoutReady ? checkoutUrl : siteUrl + "/#launch-offer" },
   featureList: [
     "Batch product-photo editor with feature toggles", "Marketplace image presets and pre-upload inspector",
     "Product video generator with scene timeline", "Product lifetime revenue and profit forecasting",
@@ -103,11 +104,11 @@ export default function Home() {
       <section className="trust-strip" aria-label="Relevant ecommerce channels"><div className="shell trust-inner"><span>SELL ACROSS</span><strong>AMAZON</strong><strong>FLIPKART</strong><strong>MEESHO</strong><strong>MYNTRA</strong><strong>BLINKIT</strong><strong>ZEPTO</strong><strong>INSTAMART</strong><strong>SHOPIFY</strong><strong>ONDC</strong></div></section>
 
       <section className="pro-suite-section" id="pro-suite">
-        <div className="shell pro-suite-heading"><div><div className="eyebrow eyebrow-dark">SellerPhoto Studio Pro 1.1</div><h2>One offline workspace for the work around every SKU.</h2></div><p>Move from a raw product photo to channel-ready media and a defensible commercial forecast without sending product files to a remote editor.</p></div>
+        <div className="shell pro-suite-heading"><div><div className="eyebrow eyebrow-dark">SellerPhoto Studio Pro {PRODUCT.version}</div><h2>One offline workspace for the work around every SKU.</h2></div><p>Move from a raw product photo to channel-ready media and a defensible commercial forecast without sending product files to a remote editor.</p></div>
         <div className="shell pro-suite-grid">
           {proTools.map(([label, title, text, href, action], index) => <article className={"pro-suite-card pro-suite-card-" + (index + 1)} key={label}><span>{label}</span><h3>{title}</h3><p>{text}</p><a href={href}>{action} <span>→</span></a></article>)}
         </div>
-        <div className="shell pro-suite-rail"><span>Included in the ₹499 launch edition</span><strong>50-photo editor</strong><strong>12-scene video maker</strong><strong>60-month forecast lab</strong><strong>Offline files</strong></div>
+        <div className="shell pro-suite-rail"><span>Included in the ₹{PRODUCT.priceInr} launch edition</span><strong>50-photo editor</strong><strong>12-scene video maker</strong><strong>60-month forecast lab</strong><strong>Offline files</strong></div>
       </section>
 
       <section className="seller-hub-section" id="seller-hub">
@@ -135,10 +136,10 @@ export default function Home() {
       <section className="steps-section" id="how-it-works"><div className="shell"><div className="section-kicker section-kicker-light">A repeatable product-launch workflow</div><div className="steps-grid"><article><span>1</span><h3>Forecast the SKU</h3><p>Model demand, price, returns, costs, working capital, breakeven and downside before committing inventory.</p></article><article><span>2</span><h3>Prepare the media</h3><p>Build compliant starting images and channel-ready video with every creative layer under your control.</p></article><article><span>3</span><h3>Export, list and learn</h3><p>Download organised media and monthly forecast data, launch the SKU, then replace assumptions with actual results.</p></article></div></div></section>
 
       <section className="pricing-section shell" id="launch-offer">
-        <div className="pricing-copy"><div className="eyebrow eyebrow-dark">SellerPhoto Studio Pro 1.1</div><h2>The paid operating suite for product launches.</h2><p>The simple calculators and photo demo are free. Pro is the private, downloadable workspace for sellers who need richer media and deeper product decisions.</p><ul><li>Up to 50 photos per batch with per-feature toggle controls</li><li>Nine marketplace, quick-commerce, D2C and social image presets</li><li>Compliance guard and six-point pre-upload image inspector</li><li>12-scene product video generator with motion, captions, CTA, logo and music</li><li>12–60 month revenue, profit, cash-flow and ROI forecasting</li><li>Conservative/base/aggressive scenarios and price-demand sensitivity</li><li>SKU filenames, catalogue manifest, ZIP, forecast CSV and printable report</li><li>Offline use and future 1.x updates included</li></ul>
+        <div className="pricing-copy"><div className="eyebrow eyebrow-dark">SellerPhoto Studio Pro {PRODUCT.version}</div><h2>The paid operating suite for product launches.</h2><p>The simple calculators and photo demo are free. Pro is the private, downloadable workspace for sellers who need richer media and deeper product decisions.</p><ul><li>Up to 50 photos per batch with per-feature toggle controls</li><li>Nine marketplace, quick-commerce, D2C and social image presets</li><li>Compliance guard and six-point pre-upload image inspector</li><li>12-scene product video generator with motion, captions, CTA, logo and music</li><li>12–60 month revenue, profit, cash-flow and ROI forecasting</li><li>Conservative/base/aggressive scenarios and price-demand sensitivity</li><li>SKU filenames, catalogue manifest, ZIP, forecast CSV and printable report</li><li>Offline use and future 1.x updates included</li></ul>
           <div className="paid-value-strip"><strong>Best for</strong><span>New product validation</span><span>Catalogue launches</span><span>Quick-commerce brands</span><span>Seller agencies</span></div>
         </div>
-        <aside className="price-card"><span className="launch-badge">LAUNCH EDITION</span><div className="price"><sup>₹</sup>499</div><p className="price-note">One payment. No subscription, per-image or per-video fee.</p><CheckoutButton apiUrl={configuredFulfilmentApiUrl} fallbackHref={checkoutUrl} basePath={basePath} className="button button-primary button-wide" showStatus>Get SellerPhoto Studio Pro <span>→</span></CheckoutButton>{configuredFulfilmentApiUrl ? <p className="checkout-note checkout-ready">Payment is verified server-side. Your protected download appears immediately after capture.</p> : checkoutReady ? <p className="checkout-note checkout-ready">Secure Razorpay checkout opens in a new tab. Delivery remains manual until protected delivery is activated.</p> : <p className="checkout-note">Secure checkout will open after store activation.</p>}<div className="price-divider" /><p className="regular-price">Regular price after launch: <strong>₹799</strong></p></aside>
+        <aside className="price-card"><span className="launch-badge">LAUNCH EDITION</span><div className="price"><sup>₹</sup>{PRODUCT.priceInr}</div><p className="price-note">One payment. No subscription, per-image or per-video fee.</p><CheckoutButton apiUrl={configuredFulfilmentApiUrl} fallbackHref={checkoutUrl} basePath={basePath} className="button button-primary button-wide" showStatus>Get SellerPhoto Studio Pro <span>→</span></CheckoutButton>{configuredFulfilmentApiUrl ? <p className="checkout-note checkout-ready">Payment is verified server-side. Your protected download appears immediately after capture.</p> : checkoutReady ? <p className="checkout-note checkout-ready">Secure Razorpay checkout opens in a new tab. Delivery remains manual until protected delivery is activated.</p> : <p className="checkout-note">Secure checkout will open after store activation.</p>}<div className="price-divider" /><p className="regular-price">Regular price after launch: <strong>₹{PRODUCT.regularPriceInr}</strong></p></aside>
       </section>
 
       <section className="faq-section shell"><div><div className="section-kicker">Seller questions</div><h2>Useful before you buy.</h2></div><div className="faq-list">{faqs.map(([question, answer]) => <details key={question}><summary>{question}</summary><p>{answer}</p></details>)}</div></section>

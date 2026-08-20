@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { PRODUCT } from "../../config/product.mjs";
 
 const TOKEN_KEY = "sellerphoto-admin-session";
 
@@ -9,6 +10,13 @@ type AdminProfile = {
   expiresAt: number;
   releaseVersion: string;
   checksum: string;
+  operations?: {
+    orders: { total: number; captured: number; refunded: number; pending: number };
+    entitlements: { total: number; active: number; downloads: number };
+    webhooks: { total: number; pending: number; lastProcessedAt: number };
+    activeAdminSessions: number;
+    archive: { available: boolean; size: number };
+  };
 };
 
 async function readPayload(response: Response) {
@@ -27,8 +35,8 @@ export default function AdminAccess({ apiUrl, basePath }: { apiUrl?: string; bas
   useEffect(() => {
     const savedToken = sessionStorage.getItem(TOKEN_KEY) || "";
     if (!savedToken || !apiUrl) {
-      setChecking(false);
-      return;
+      const timer = window.setTimeout(() => setChecking(false), 0);
+      return () => window.clearTimeout(timer);
     }
     fetch(`${apiUrl}/api/admin/status`, {
       method: "POST",
@@ -65,8 +73,9 @@ export default function AdminAccess({ apiUrl, basePath }: { apiUrl?: string; bas
       setProfile({
         username: payload.username,
         expiresAt: payload.expiresAt,
-        releaseVersion: payload.releaseVersion || "1.1.0",
+        releaseVersion: payload.releaseVersion || PRODUCT.version,
         checksum: payload.checksum || "",
+        operations: payload.operations,
       });
       setPassword("");
     } catch (error) {
@@ -77,6 +86,14 @@ export default function AdminAccess({ apiUrl, basePath }: { apiUrl?: string; bas
   }
 
   function signOut() {
+    if (apiUrl && token) {
+      void fetch(`${apiUrl}/api/admin/logout`, {
+        method: "POST",
+        credentials: "omit",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: "{}",
+      }).catch(() => undefined);
+    }
     sessionStorage.removeItem(TOKEN_KEY);
     setToken("");
     setProfile(null);
@@ -103,7 +120,7 @@ export default function AdminAccess({ apiUrl, basePath }: { apiUrl?: string; bas
       const objectUrl = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = objectUrl;
-      anchor.download = `SellerPhotoStudio-v${profile?.releaseVersion || "1.1.0"}.zip`;
+      anchor.download = `SellerPhotoStudio-v${profile?.releaseVersion || PRODUCT.version}.zip`;
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
@@ -154,6 +171,15 @@ export default function AdminAccess({ apiUrl, basePath }: { apiUrl?: string; bas
             <div><span className="admin-card-number">FULL PRO SUITE</span><h2>SellerPhoto Studio Pro {profile.releaseVersion}</h2><p>Photo batches, video scenes, forecast lab, compliance controls, CSV/ZIP exports and offline use.</p></div>
             <button className="button button-primary" type="button" onClick={downloadPro} disabled={working}>{working ? "Preparing..." : "Download complete workspace"}</button>
           </div>
+          {profile.operations ? <section className="admin-ops" aria-label="Store operations status">
+            <div className="admin-ops-heading"><span>LIVE OPERATIONS</span><strong>{profile.operations.archive.available && profile.operations.webhooks.pending === 0 ? "Systems ready" : "Attention needed"}</strong></div>
+            <div className="admin-ops-grid">
+              <article><span>CAPTURED ORDERS</span><strong>{profile.operations.orders.captured}</strong><small>{profile.operations.orders.pending} pending · {profile.operations.orders.refunded} refunded</small></article>
+              <article><span>ACTIVE DOWNLOADS</span><strong>{profile.operations.entitlements.active}</strong><small>{profile.operations.entitlements.downloads} completed downloads</small></article>
+              <article><span>WEBHOOK QUEUE</span><strong>{profile.operations.webhooks.pending}</strong><small>{profile.operations.webhooks.total} verified events recorded</small></article>
+              <article><span>PRIVATE ARCHIVE</span><strong>{profile.operations.archive.available ? "Ready" : "Missing"}</strong><small>{profile.operations.archive.available ? `${Math.max(1, Math.round(profile.operations.archive.size / 1024))} KB in private storage` : "Upload the release archive"}</small></article>
+            </div>
+          </section> : null}
           {message ? <p className={message.startsWith("Pro workspace downloaded") ? "admin-success" : "admin-error"} role="status">{message}</p> : null}
 
           <div className="admin-tool-grid">

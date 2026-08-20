@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { PRODUCT } from "../config/product.mjs";
 
 type ConsentChoice = "loading" | "pending" | "granted" | "denied";
 
@@ -44,6 +46,8 @@ function enableAnalytics(measurementId: string) {
 }
 
 export default function AnalyticsConsent() {
+  const pathname = usePathname();
+  const sensitiveRoute = pathname === "/admin" || pathname.startsWith("/admin/") || pathname === "/download" || pathname.startsWith("/download/");
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH === "__ROOT__"
     ? ""
@@ -51,7 +55,7 @@ export default function AnalyticsConsent() {
   const [choice, setChoice] = useState<ConsentChoice>("loading");
 
   useEffect(() => {
-    if (!measurementId) return;
+    if (!measurementId || sensitiveRoute) return;
     const saved = window.localStorage.getItem(CONSENT_KEY);
     const nextChoice: ConsentChoice =
       saved === "granted" ? "granted" : saved === "denied" ? "denied" : "pending";
@@ -62,10 +66,10 @@ export default function AnalyticsConsent() {
 
     const timer = window.setTimeout(() => setChoice(nextChoice), 0);
     return () => window.clearTimeout(timer);
-  }, [measurementId]);
+  }, [measurementId, sensitiveRoute]);
 
   useEffect(() => {
-    if (choice !== "granted") return;
+    if (choice !== "granted" || sensitiveRoute) return;
     const trackCheckout = (event: MouseEvent) => {
       const target = event.target instanceof Element
         ? event.target.closest<HTMLElement>("[data-checkout-link]")
@@ -73,22 +77,23 @@ export default function AnalyticsConsent() {
       if (!target) return;
       window.gtag?.("event", "begin_checkout", {
         currency: "INR",
-        value: 499,
-        items: [{ item_id: "sellerphoto-v1", item_name: "SellerPhoto Studio v1.0", price: 499, quantity: 1 }],
+        value: PRODUCT.priceInr,
+        items: [{ item_id: PRODUCT.analyticsItemId, item_name: `${PRODUCT.name} v${PRODUCT.version}`, price: PRODUCT.priceInr, quantity: 1 }],
       });
     };
     document.addEventListener("click", trackCheckout);
     return () => document.removeEventListener("click", trackCheckout);
-  }, [choice]);
+  }, [choice, sensitiveRoute]);
 
   useEffect(() => {
+    if (sensitiveRoute) return;
     const openSettings = () => setChoice("pending");
     const controls = document.querySelectorAll("[data-analytics-settings]");
     controls.forEach((control) => control.addEventListener("click", openSettings));
     return () => controls.forEach((control) => control.removeEventListener("click", openSettings));
-  }, []);
+  }, [sensitiveRoute]);
 
-  if (!measurementId || choice === "loading" || choice === "granted" || choice === "denied") return null;
+  if (sensitiveRoute || !measurementId || choice === "loading" || choice === "granted" || choice === "denied") return null;
 
   const accept = () => {
     window.localStorage.setItem(CONSENT_KEY, "granted");
