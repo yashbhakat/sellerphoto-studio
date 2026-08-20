@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const READY_NOTE = "Secure Razorpay checkout opens in a new tab.";
+const AUTOMATED_NOTE = "Payment is verified server-side. Your protected download appears immediately after capture.";
 const DISABLED_NOTE = "Secure checkout will open after store activation.";
 
 function count(haystack, needle) {
@@ -31,9 +32,19 @@ function validateCheckoutUrl(value) {
   return url;
 }
 
-export function verifyCheckoutHtml(html, configuredCheckoutUrl = "") {
+export function verifyCheckoutHtml(html, configuredCheckoutUrl = "", configuredApiUrl = "") {
   const checkoutUrl = configuredCheckoutUrl.trim();
+  const apiUrl = configuredApiUrl.trim();
   assert.match(html, /SellerPhoto Studio/, "static output is not the SellerPhoto Studio storefront");
+
+  if (apiUrl) {
+    validateCheckoutUrl(apiUrl);
+    assert.ok(count(html, 'data-checkout-mode="automated"') >= 2, "automated purchase buttons are missing");
+    assert.ok(count(html, 'href="#launch-offer"') >= 2, "automated checkout must not fall through to an unverified hosted payment");
+    assert.ok(html.includes(AUTOMATED_NOTE), "automated fulfilment note is missing");
+    assert.ok(!html.includes(DISABLED_NOTE), "disabled checkout note must not appear in automated mode");
+    return { mode: "automated", apiUrl };
+  }
 
   if (!checkoutUrl) {
     assert.ok(count(html, 'href="#launch-offer"') >= 2, "disabled checkout links must stay on the launch section");
@@ -55,15 +66,18 @@ export function verifyCheckoutHtml(html, configuredCheckoutUrl = "") {
 export async function verifyStaticCheckout({
   htmlPath = "out/index.html",
   checkoutUrl = process.env.NEXT_PUBLIC_CHECKOUT_URL ?? "",
+  apiUrl = process.env.NEXT_PUBLIC_FULFILMENT_API_URL ?? "",
 } = {}) {
   const html = await readFile(htmlPath, "utf8");
-  return verifyCheckoutHtml(html, checkoutUrl);
+  return verifyCheckoutHtml(html, checkoutUrl, apiUrl);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const result = await verifyStaticCheckout({ htmlPath: process.argv[2] ?? "out/index.html" });
   console.log(
-    result.mode === "enabled"
+    result.mode === "automated"
+      ? `Verified automated protected checkout: ${result.apiUrl}`
+      : result.mode === "enabled"
       ? `Verified enabled checkout: ${result.checkoutUrl}`
       : "Verified safely disabled checkout (no checkout URL configured).",
   );

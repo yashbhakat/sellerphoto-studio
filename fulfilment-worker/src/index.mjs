@@ -1,0 +1,250 @@
+import {
+  allowedOrigin,
+  corsHeaders,
+  createDownloadToken,
+  hmacSha256,
+  integerSetting,
+  isRazorpayId,
+  sha256,
+  validateIdempotencyKey,
+  verifyDownloadToken,
+  verifyPaymentSignature,
+  verifyWebhookSignature,
+} from "./core.mjs";
+
+const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" };
+
+function json(body, status = 200, origin = null, extra = {}) {
+  return new Response(JSON.stringify(body), { status, headers: { ...JSON_HEADERS, ...corsHeaders(origin), ...extra } });
+}
+
+function apiError(message, status, origin, code = "request_failed", extra = {}) {
+  return json({ ok: false, error: code, message }, status, origin, extra);
+}
+
+async function readJson(request, origin) {
+  if (!request.headers.get("Content-Type")?.toLowerCase().startsWith("application/json")) {
+    throw Object.assign(new Error("Use application/json."), { status: 415, origin });
+  }
+  const raw = await request.text();
+  if (!raw || raw.length > 8_192) throw Object.assign(new Error("Invalid request body."), { status: 400, origin });
+  try { return JSON.parse(raw); } catch { throw Object.assign(new Error("Invalid JSON."), { status: 400, origin }); }
+}
+
+function requireBrowserOrigin(request, env) {
+  const origin = allowedOrigin(request, env);
+  if (!origin) throw Object.assign(new Error("This checkout request is not from the SellerPhoto Studio website."), { status: 403, origin: null });
+  return origin;
+}
+
+function basicAuth(env) {
+  if (!env.RAZORPAY_KEY_ID || !env.RAZORPAY_KEY_SECRET) throw new Error("Razorpay credentials are not configured");
+  return `Basic ${btoa(`${env.RAZORPAY_KEY_ID}:${env.RAZORPAY_KEY_SECRET}`)}`;
+}
+
+async function razorpayRequest(env, path, init = {}) {
+  const response = await fetch(`https://api.razorpay.com/v1${path}`, {
+    ...init,
+    headers: { Authorization: basicAuth(env), "Content-Type": "application/json", ...(init.headers || {}) },
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    console.error("Razorpay request failed", response.status, payload?.error?.code || "unknown");
+    throw Object.assign(new Error("The payment service could not start checkout. Please retry."), { status: 502 });
+  }
+  return payload;
+}
+
+async function createOrder(request, env) {
+  const origin = requireBrowserOrigin(request, env);
+  const body = await readJson(request, origin);
+  if (!validateIdempotencyKey(body.idempotencyKey)) return apiError("Start checkout again.", 400, origin, "invalid_checkout_attempt");
+
+  const keyHash = await hmacSha256(env.DOWNLOAD_SIGNING_SECRET, `checkout:${body.idempotencyKey}`);
+  const existing = await env.DB.prepare("SELECT razorpay_order_id, amount, currency FROM checkout_orders WHERE client_key_hash = ?")
+    .bind(keyHash).first();
+  if (existing) return orderResponse(existing, env, origin);
+
+  const now = Math.floor(Date.now() / 1000);
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const ipHash = await hmacSha256(env.DOWNLOAD_SIGNING_SECRET, `ip:${ip}`);
+  const recent = await env.DB.prepare("SELECT COUNT(*) AS total FROM checkout_attempts WHERE client_hash = ? AND created_at >= ?")
+    .bind(ipHash, now - 600).first();
+  if (Number(recent?.total || 0) >= 5) return apiError("Too many checkout attempts. Please wait 10 minutes.", 429, origin, "rate_limited", { "Retry-After": "600" });
+  await env.DB.prepare("INSERT INTO checkout_attempts (client_hash, created_at) VALUES (?, ?)").bind(ipHash, now).run();
+
+  const amount = integerSetting(env.PRODUCT_AMOUNT, 49_900);
+  const currency = env.PRODUCT_CURRENCY || "INR";
+  const receipt = `sp_${(await sha256(body.idempotencyKey)).slice(0, 32)}`;
+  const order = await razorpayRequest(env, "/orders", {
+    method: "POST",
+    body: JSON.stringify({
+      amount,
+      currency,
+      receipt,
+      partial_payment: false,
+      notes: { product: "seller-photo-studio-pro", release: env.PRODUCT_VERSION || "1.0.0" },
+    }),
+  });
+  if (!isRazorpayId(order.id, "order") || order.amount !== amount || order.currency !== currency) throw new Error("Unexpected Razorpay order response");
+
+  await env.DB.prepare(`INSERT OR IGNORE INTO checkout_orders
+    (razorpay_order_id, client_key_hash, receipt, amount, currency, product_key, status, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, 'created', ?)`)
+    .bind(order.id, keyHash, receipt, amount, currency, env.PRODUCT_KEY, now).run();
+  return orderResponse(order, env, origin);
+}
+
+function orderResponse(order, env, origin) {
+  return json({
+    ok: true,
+    keyId: env.RAZORPAY_KEY_ID,
+    orderId: order.razorpay_order_id || order.id,
+    amount: Number(order.amount),
+    currency: order.currency,
+    name: "SellerPhoto Studio",
+    description: "SellerPhoto Studio Pro — Full Offline Edition",
+  }, 201, origin);
+}
+
+async function verifyPayment(request, env) {
+  const origin = requireBrowserOrigin(request, env);
+  const body = await readJson(request, origin);
+  const { razorpay_order_id: orderId, razorpay_payment_id: paymentId, razorpay_signature: signature } = body;
+  if (!isRazorpayId(orderId, "order") || !isRazorpayId(paymentId, "pay")) return apiError("Invalid payment confirmation.", 400, origin, "invalid_payment");
+
+  const order = await env.DB.prepare("SELECT * FROM checkout_orders WHERE razorpay_order_id = ?").bind(orderId).first();
+  if (!order) return apiError("This order was not created by SellerPhoto Studio.", 404, origin, "order_not_found");
+  if (!(await verifyPaymentSignature({ orderId: order.razorpay_order_id, paymentId, signature, keySecret: env.RAZORPAY_KEY_SECRET }))) {
+    return apiError("Payment signature verification failed.", 403, origin, "invalid_signature");
+  }
+
+  const payment = await razorpayRequest(env, `/payments/${encodeURIComponent(paymentId)}`);
+  if (payment.order_id !== orderId || Number(payment.amount) !== Number(order.amount) || payment.currency !== order.currency) {
+    return apiError("Payment details do not match this product.", 409, origin, "payment_mismatch");
+  }
+  if (payment.status === "authorized" || payment.status === "created") {
+    return json({ ok: false, pending: true, message: "Payment is confirmed and is waiting for capture." }, 202, origin);
+  }
+  if (payment.status !== "captured") return apiError("Payment is not captured. No download was issued.", 409, origin, "payment_not_captured");
+
+  const now = Math.floor(Date.now() / 1000);
+  const expiresAt = now + integerSetting(env.DOWNLOAD_TTL_SECONDS, 604_800);
+  const entitlementId = `ent_${crypto.randomUUID().replaceAll("-", "")}`;
+  await env.DB.batch([
+    env.DB.prepare("UPDATE checkout_orders SET status = 'captured', payment_id = ?, captured_at = COALESCE(captured_at, ?) WHERE razorpay_order_id = ?")
+      .bind(paymentId, now, orderId),
+    env.DB.prepare(`INSERT OR IGNORE INTO entitlements
+      (id, order_id, payment_id, release_version, created_at, expires_at, max_downloads, download_count)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 0)`)
+      .bind(entitlementId, orderId, paymentId, env.PRODUCT_VERSION || "1.0.0", now, expiresAt, integerSetting(env.MAX_DOWNLOADS, 3)),
+  ]);
+  const entitlement = await env.DB.prepare("SELECT * FROM entitlements WHERE order_id = ?").bind(orderId).first();
+  if (!entitlement || entitlement.revoked_at) return apiError("This purchase is not eligible for download.", 403, origin, "entitlement_unavailable");
+  const token = await createDownloadToken(entitlement.id, Number(entitlement.expires_at), env.DOWNLOAD_SIGNING_SECRET);
+  return json({
+    ok: true,
+    token,
+    expiresAt: Number(entitlement.expires_at),
+    downloadsRemaining: Math.max(0, Number(entitlement.max_downloads) - Number(entitlement.download_count)),
+    releaseVersion: entitlement.release_version,
+  }, 200, origin);
+}
+
+async function entitlementStatus(request, env) {
+  const origin = requireBrowserOrigin(request, env);
+  const body = await readJson(request, origin);
+  const checked = await verifyDownloadToken(body.token, env.DOWNLOAD_SIGNING_SECRET);
+  if (!checked.valid) return apiError(checked.reason === "expired" ? "This download link has expired." : "Invalid download link.", checked.reason === "expired" ? 410 : 403, origin, checked.reason);
+  const entitlement = await env.DB.prepare("SELECT * FROM entitlements WHERE id = ?").bind(checked.entitlementId).first();
+  if (!entitlement || Number(entitlement.expires_at) !== checked.expiresAt || entitlement.revoked_at) return apiError("This download is no longer available.", 403, origin, "entitlement_unavailable");
+  return json({
+    ok: true,
+    expiresAt: Number(entitlement.expires_at),
+    downloadsRemaining: Math.max(0, Number(entitlement.max_downloads) - Number(entitlement.download_count)),
+    releaseVersion: entitlement.release_version,
+    checksum: env.PRODUCT_SHA256,
+  }, 200, origin);
+}
+
+async function downloadProduct(request, env) {
+  const origin = requireBrowserOrigin(request, env);
+  const authorization = request.headers.get("Authorization") || "";
+  const checked = await verifyDownloadToken(authorization.startsWith("Bearer ") ? authorization.slice(7) : "", env.DOWNLOAD_SIGNING_SECRET);
+  if (!checked.valid) return apiError(checked.reason === "expired" ? "This download link has expired." : "Invalid download link.", checked.reason === "expired" ? 410 : 403, origin, checked.reason);
+
+  const product = await env.PRODUCTS.get(env.PRODUCT_KEY);
+  if (!product) return apiError("The product archive is temporarily unavailable.", 503, origin, "product_unavailable");
+  const now = Math.floor(Date.now() / 1000);
+  const updated = await env.DB.prepare(`UPDATE entitlements
+    SET download_count = download_count + 1, last_downloaded_at = ?
+    WHERE id = ? AND expires_at = ? AND expires_at > ? AND revoked_at IS NULL AND download_count < max_downloads
+    RETURNING max_downloads - download_count AS remaining`)
+    .bind(now, checked.entitlementId, checked.expiresAt, now).first();
+  if (!updated) return apiError("The download limit has been reached or the link is unavailable.", 429, origin, "download_limit_reached");
+
+  const headers = new Headers(corsHeaders(origin));
+  product.writeHttpMetadata(headers);
+  headers.set("Content-Type", "application/zip");
+  headers.set("Content-Disposition", `attachment; filename="${env.PRODUCT_FILENAME || "SellerPhotoStudio-v1.0.0.zip"}"`);
+  headers.set("Content-Length", String(product.size));
+  headers.set("Cache-Control", "no-store, private");
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("X-Product-SHA256", env.PRODUCT_SHA256 || "");
+  headers.set("X-Downloads-Remaining", String(updated.remaining));
+  return new Response(product.body, { headers });
+}
+
+async function handleWebhook(request, env) {
+  const rawBody = await request.text();
+  if (!rawBody || rawBody.length > 262_144) return new Response("Invalid body", { status: 400 });
+  const signature = request.headers.get("X-Razorpay-Signature") || "";
+  if (!(await verifyWebhookSignature(rawBody, signature, env.RAZORPAY_WEBHOOK_SECRET))) return new Response("Invalid signature", { status: 403 });
+  const payload = JSON.parse(rawBody);
+  const eventId = request.headers.get("X-Razorpay-Event-Id") || await sha256(rawBody);
+  const now = Math.floor(Date.now() / 1000);
+  const previous = await env.DB.prepare("SELECT processed_at FROM webhook_events WHERE id = ?").bind(eventId).first();
+  if (Number(previous?.processed_at || 0) > 0) return new Response(null, { status: 204 });
+  await env.DB.prepare("INSERT OR IGNORE INTO webhook_events (id, event_type, created_at, processed_at) VALUES (?, ?, ?, 0)")
+    .bind(eventId, String(payload.event || "unknown"), now).run();
+
+  const payment = payload?.payload?.payment?.entity;
+  if (payload.event === "payment.captured" && payment && isRazorpayId(payment.order_id, "order") && isRazorpayId(payment.id, "pay")) {
+    await env.DB.prepare(`UPDATE checkout_orders SET status = 'captured', payment_id = ?, captured_at = COALESCE(captured_at, ?)
+      WHERE razorpay_order_id = ? AND amount = ? AND currency = ?`)
+      .bind(payment.id, now, payment.order_id, Number(payment.amount), payment.currency).run();
+  }
+  const refundedPaymentId = payment?.id || payload?.payload?.refund?.entity?.payment_id;
+  if (["payment.refunded", "refund.processed"].includes(payload.event) && isRazorpayId(refundedPaymentId, "pay")) {
+    await env.DB.batch([
+      env.DB.prepare("UPDATE checkout_orders SET status = 'refunded' WHERE payment_id = ?").bind(refundedPaymentId),
+      env.DB.prepare("UPDATE entitlements SET revoked_at = COALESCE(revoked_at, ?), revocation_reason = 'payment_refunded' WHERE payment_id = ?").bind(now, refundedPaymentId),
+    ]);
+  }
+  await env.DB.prepare("UPDATE webhook_events SET processed_at = ? WHERE id = ?").bind(now, eventId).run();
+  return new Response(null, { status: 204 });
+}
+
+const worker = {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    try {
+      if (request.method === "GET" && url.pathname === "/health") return json({ ok: true, service: "sellerphoto-fulfilment" });
+      if (request.method === "OPTIONS" && url.pathname.startsWith("/api/")) {
+        const origin = allowedOrigin(request, env);
+        return origin ? new Response(null, { status: 204, headers: corsHeaders(origin) }) : new Response(null, { status: 403 });
+      }
+      if (request.method === "POST" && url.pathname === "/api/orders") return await createOrder(request, env);
+      if (request.method === "POST" && url.pathname === "/api/payments/verify") return await verifyPayment(request, env);
+      if (request.method === "POST" && url.pathname === "/api/entitlements/status") return await entitlementStatus(request, env);
+      if (request.method === "POST" && url.pathname === "/api/download") return await downloadProduct(request, env);
+      if (request.method === "POST" && url.pathname === "/api/webhooks/razorpay") return await handleWebhook(request, env);
+      return json({ ok: false, error: "not_found" }, 404);
+    } catch (error) {
+      console.error("Fulfilment request failed", error instanceof Error ? error.message : "unknown");
+      return apiError(error?.status === 400 || error?.status === 415 ? error.message : "The secure delivery service could not complete the request.", error?.status || 500, error?.origin || allowedOrigin(request, env), "service_error");
+    }
+  },
+};
+
+export default worker;

@@ -8,7 +8,7 @@ const shell = (links, note) => `<html><body><h1>SellerPhoto Studio</h1>${links}$
 
 test("release ZIP exactly matches the reviewed offline product", async () => {
   const result = await verifyReleaseArchive();
-  assert.deepEqual(result.files, ["README.txt", "index.html", "studio.css", "studio.js"]);
+  assert.deepEqual(result.files, ["README.txt", "forecast.js", "index.html", "studio.css", "studio.js", "video.js"]);
   assert.match(result.sha256, /^[A-F0-9]{64}$/);
 });
 
@@ -25,6 +25,13 @@ test("static checkout is enabled only when both purchase links are safe and veri
   const link = `<a href="${checkoutUrl}" target="_blank" rel="noopener noreferrer">Buy</a>`;
   const html = shell(link + link, "Secure Razorpay checkout opens in a new tab.");
   assert.deepEqual(verifyCheckoutHtml(html, checkoutUrl), { mode: "enabled", checkoutUrl });
+});
+
+test("automated checkout never falls through to an unverified hosted payment", () => {
+  const apiUrl = "https://sellerphoto-fulfilment.example.workers.dev";
+  const link = '<a data-checkout-mode="automated" href="#launch-offer">Buy</a>';
+  const html = shell(link + link, "Payment is verified server-side. Your protected download appears immediately after capture.");
+  assert.deepEqual(verifyCheckoutHtml(html, "https://rzp.io/rzp/fallback", apiUrl), { mode: "automated", apiUrl });
 });
 
 test("checkout verification rejects placeholders and disabled output paired with a URL", () => {
@@ -59,9 +66,33 @@ test("privacy disclosure covers local processing, analytics location scope, and 
   assert.match(privacy, /does not upload those files/);
   assert.match(privacy, /approximate country or/);
   assert.match(privacy, /does not receive precise GPS location/);
-  assert.match(privacy, /Razorpay-hosted payment page/);
+  assert.match(privacy, /Razorpay Standard Checkout/);
   assert.match(workflow, /vars\.NEXT_PUBLIC_BASE_PATH \|\| '__ROOT__'/);
   assert.match(workflow, /vars\.NEXT_PUBLIC_SITE_URL \|\| 'https:\/\/sellerphotostudio\.in'/);
+});
+
+test("automated fulfilment is server-verified and private by construction", async () => {
+  const [worker, checkout, download, privacy, schema, config] = await Promise.all([
+    readFile(new URL("../fulfilment-worker/src/index.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../app/checkout-button.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/download/download-access.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/privacy/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../fulfilment-worker/migrations/0001_secure_fulfilment.sql", import.meta.url), "utf8"),
+    readFile(new URL("../fulfilment-worker/wrangler.example.jsonc", import.meta.url), "utf8"),
+  ]);
+  assert.match(worker, /order\.razorpay_order_id \|\| order\.id/);
+  assert.match(worker, /payment\.status !== "captured"/);
+  assert.match(worker, /Number\(payment\.amount\) !== Number\(order\.amount\)/);
+  assert.match(worker, /X-Razorpay-Signature/);
+  assert.match(worker, /download_count < max_downloads/);
+  assert.match(worker, /env\.PRODUCTS\.get/);
+  assert.match(checkout, /checkout\.razorpay\.com\/v1\/checkout\.js/);
+  assert.match(checkout, /\/api\/payments\/verify/);
+  assert.match(download, /Authorization: `Bearer \$\{token\}`/);
+  assert.match(privacy, /one-way keyed hash/);
+  assert.match(schema, /CREATE UNIQUE INDEX `idx_entitlements_order_id`/);
+  assert.match(config, /"PRODUCT_AMOUNT": "49900"/);
+  assert.doesNotMatch(config, /key_secret|RAZORPAY_KEY_SECRET"\s*:/i);
 });
 
 test("SEO metadata and loading-critical assets stay optimized", async () => {

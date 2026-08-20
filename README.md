@@ -1,50 +1,60 @@
 # SellerPhoto Studio
 
-SellerPhoto Studio is an offline-first batch product-photo formatter for independent online sellers. It includes:
+SellerPhoto Studio is an offline-first product media and commercial planning suite for online sellers. It includes:
 
-- a public storefront and three-photo browser demo;
-- a full offline edition supporting up to 50 photos per batch;
-- marketplace size presets, fit controls, branding, price badges, and logo placement;
-- JPG and PNG output with a dependency-free ZIP exporter;
-- product listing copy, a short demo script, and a store-activation checklist.
+- a public storefront, seller calculators and a three-photo browser demo;
+- a paid offline Image Studio supporting up to 50 photos per batch;
+- nine marketplace, quick-commerce, D2C and social image presets;
+- independent toggles for image treatments, a compliance guard and six-point pre-upload inspector;
+- a 12-scene product Video Studio with multiple aspect ratios, motion, transitions, captions, CTA, logo and music;
+- a 12–60 month Forecast Lab covering revenue, net profit, cash flow, ROI, scenarios and sensitivity;
+- JPG and PNG batch output, a dependency-free ZIP exporter, catalogue manifest, forecast CSV and printable report;
+- protected Razorpay fulfilment backed by Cloudflare Worker, D1 and private R2 storage.
 
 ## Product release
 
-The sale-ready archive is `releases/SellerPhotoStudio-v1.0.0.zip`.
+The sale-ready archive is releases/SellerPhotoStudio-v1.1.0.zip.
 
-Buyers extract the archive and open `index.html`. No account, server, or internet connection is required for the offline edition.
+Buyers extract the archive and open index.html. All six files must remain in the same folder. Media processing and forecasting can run without an account or internet connection.
 
 ## Local development
 
 Requires Node.js 22.13 or newer.
 
-```bash
-npm install
-npm run dev
-```
+Run:
 
-The standard scripts use POSIX-style environment assignment. On Windows, run the vinext CLI with `WRANGLER_LOG_PATH` set in the current shell.
+    npm install
+    npm run dev
+
+The standard scripts use POSIX-style environment assignment. On Windows, run the vinext CLI with WRANGLER_LOG_PATH set in the current shell.
 
 ## Verification
 
-```bash
-npm run build
-node --test tests/rendered-html.test.mjs
-npm run verify:release
-```
+Run:
 
-The GitHub Pages workflow also runs `verify:checkout`, which proves that both purchase buttons are either safely disabled or linked to the configured HTTPS checkout URL.
+    npm run build
+    node --test tests/rendered-html.test.mjs tests/launch-readiness.test.mjs
+    npm run verify:release
+
+The release verifier confirms the ZIP checksum, exact file set and byte-for-byte equality with the reviewed product directory. The checkout verifier proves that purchase buttons are safely disabled, linked to a configured hosted checkout, or connected to the automated protected-delivery API without falling through to an unverified payment.
 
 ## Checkout activation
 
-After the Razorpay Payment Page and a tested ZIP-fulfilment process are ready, set `NEXT_PUBLIC_CHECKOUT_URL` to the live Payment Page URL and publish a new site version. See `sales-assets/store-activation-checklist.md`.
+The hosted Payment Page remains the manual fallback through NEXT_PUBLIC_CHECKOUT_URL. The automated flow in fulfilment-worker uses Razorpay Standard Checkout, server-side payment verification, D1 entitlements, a private R2 release, refund revocation, and signed seven-day/three-download passes.
 
-The v1.0 manual delivery procedure and buyer message are in `sales-assets/manual-fulfilment-runbook.md`.
+Operational procedures are in sales-assets/automated-fulfilment-runbook.md, sales-assets/manual-fulfilment-runbook.md and sales-assets/store-activation-checklist.md.
 
 ## Privacy model
 
-Product photos, logos, and exports are processed entirely in the buyer's browser. The app does not upload or persist them. The storefront loads Google Analytics only after consent, disables advertising signals, and links to a plain-language privacy page covering approximate-location reporting and Razorpay checkout.
+Product photos, logos, audio, video scenes, generated media and forecasts are processed entirely in the buyer's browser. The paid app does not upload or persist them. The storefront loads Google Analytics only after consent, disables advertising signals, and links to a plain-language privacy page covering approximate-location reporting and Razorpay checkout.
 
-## Custom-domain cutover
+## Product safeguards
 
-The Pages workflow reads `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_BASE_PATH` from GitHub repository variables, with safe defaults for the current project URL. Keep the defaults while the custom domain is pending. At cutover, set the site URL to the HTTPS custom domain and set the base-path variable to `__ROOT__`, then deploy after DNS and GitHub Pages domain verification succeed. The sentinel is normalized to an empty base path during the build.
+- Image presets are conservative starting points, not marketplace certification.
+- Platform and category rules must be confirmed in the relevant seller portal.
+- Forecast results are assumption-driven planning outputs, not guarantees or financial advice.
+- WebM product video may need conversion when a destination explicitly requires MP4.
+
+## Custom-domain deployment
+
+The public site uses https://sellerphotostudio.in as its production origin. GitHub Pages remains the frontend deployment target, while the protected delivery API is deployed as a Cloudflare Worker with D1 and R2 bindings.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import CheckoutButton from "./checkout-button";
 
 type ChannelKey = "marketplace" | "quick-commerce" | "d2c";
 
@@ -19,6 +20,8 @@ type Assumptions = {
 type SellerEconomicsCalculatorProps = {
   defaultChannel?: ChannelKey;
   purchaseHref?: string;
+  purchaseApiUrl?: string;
+  basePath?: string;
   heading?: string;
   intro?: string;
 };
@@ -52,6 +55,8 @@ function cleanNumber(value: string) {
 export default function SellerEconomicsCalculator({
   defaultChannel = "marketplace",
   purchaseHref = "/#launch-offer",
+  purchaseApiUrl,
+  basePath = "",
   heading = "Know the profit before you list.",
   intro = "Model one order, adjust the assumptions to match your agreement, and see the contribution left after common selling costs.",
 }: SellerEconomicsCalculatorProps) {
@@ -110,7 +115,7 @@ export default function SellerEconomicsCalculator({
             <div><span>Expected return cost</span><strong>{currency.format(result.expectedReturnCost)}</strong></div>
           </div>
           <p className="calculator-note">Starting values are illustrative, not fee quotes. Replace them with your current marketplace, fulfilment, tax and advertising terms before making a pricing decision.</p>
-          <a className="button button-primary button-wide" href={purchaseHref}>Prepare the product photos <span>→</span></a>
+          <CheckoutButton apiUrl={purchaseApiUrl} fallbackHref={purchaseHref} basePath={basePath} className="button button-primary button-wide">Prepare the product photos <span>→</span></CheckoutButton>
         </aside>
       </div>
     </div>

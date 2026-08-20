@@ -1,0 +1,29 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "sellerphoto-fulfilment",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-08-15",
+  "observability": { "enabled": true },
+  "vars": {
+    "ALLOWED_ORIGIN": "https://sellerphotostudio.in",
+    "FRONTEND_URL": "https://sellerphotostudio.in",
+    "PRODUCT_KEY": "seller-photo-studio/v1.1.0/SellerPhotoStudio-v1.1.0.zip",
+    "PRODUCT_FILENAME": "SellerPhotoStudio-v1.1.0.zip",
+    "PRODUCT_VERSION": "1.1.0",
+    "PRODUCT_AMOUNT": "49900",
+    "PRODUCT_CURRENCY": "INR",
+    "PRODUCT_SHA256": "50257132C4FAC9EF007158A6FFDE395453E5E4742DFEFC42145CFC2F6F4EC00A",
+    "DOWNLOAD_TTL_SECONDS": "604800",
+    "MAX_DOWNLOADS": "3"
+  },
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "sellerphoto-fulfilment",
+    "database_id": "00000000-0000-4000-8000-000000000000",
+    "migrations_dir": "migrations"
+  }],
+  "r2_buckets": [{
+    "binding": "PRODUCTS",
+    "bucket_name": "sellerphoto-products"
+  }]
+}

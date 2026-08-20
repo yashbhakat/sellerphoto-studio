@@ -7,7 +7,7 @@ Use this procedure for the first 20 customers unless an automated webhook-to-del
 - Product: SellerPhoto Studio — Full Offline Edition
 - Version: 1.0.0
 - File: `releases/SellerPhotoStudio-v1.0.0.zip`
-- SHA-256: `27EFBB9E55E8DCEB1F3F70A431099F9E9E7229E8A0FAE6351955979F1B53A7F8`
+- SHA-256: `10BD48C4280EF95ACD51DBCE3372BF145727929AD5FC067770525436AC098E58`
 - Expected ZIP contents: `index.html`, `README.txt`, `studio.css`, `studio.js`
 
 Run `npm run verify:release` before sending the file. Do not rename, rebuild, or replace the archive without updating its checksum manifest and rerunning the verifier.
@@ -51,7 +51,7 @@ Thank you for purchasing SellerPhoto Studio.
 Your SellerPhoto Studio v1.0 ZIP is attached. Extract the ZIP, then open `index.html` in Chrome, Edge, Firefox, or Safari. The included `README.txt` contains the quick-start steps.
 
 Release checksum (SHA-256):
-`27EFBB9E55E8DCEB1F3F70A431099F9E9E7229E8A0FAE6351955979F1B53A7F8`
+`10BD48C4280EF95ACD51DBCE3372BF145727929AD5FC067770525436AC098E58`
 
 Your photos stay on your device; the app does not upload them.
 

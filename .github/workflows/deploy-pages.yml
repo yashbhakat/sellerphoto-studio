@@ -21,6 +21,7 @@ jobs:
       NEXT_PUBLIC_BASE_PATH: ${{ vars.NEXT_PUBLIC_BASE_PATH || '__ROOT__' }}
       NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://sellerphotostudio.in' }}
       NEXT_PUBLIC_CHECKOUT_URL: ${{ vars.NEXT_PUBLIC_CHECKOUT_URL }}
+      NEXT_PUBLIC_FULFILMENT_API_URL: ${{ vars.NEXT_PUBLIC_FULFILMENT_API_URL }}
       NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
     steps:
       - uses: actions/checkout@v4
@@ -33,6 +34,7 @@ jobs:
       - run: npm run verify:checkout
       - run: npm run verify:release
       - run: npm run test:launch
+      - run: npm run test:fulfilment
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

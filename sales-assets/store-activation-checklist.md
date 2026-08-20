@@ -12,24 +12,21 @@
 
 ## Fulfilment
 
-Razorpay Payment Pages accept the payment; this repository does not yet contain an automatic buyer-delivery service. Before enabling the site's purchase button, choose and test one of these fulfilment paths:
+The repository now includes an automated delivery Worker in `fulfilment-worker/`. It creates the ₹499 INR Razorpay Order on the server, verifies the Checkout signature and captured amount/status, then issues a signed pass for at most three private downloads within seven days. D1 stores order/entitlement state and the reviewed ZIP remains private in R2. Refund webhooks revoke access.
 
-- send `SellerPhotoStudio-v1.0.0.zip` to the buyer's collected email address after verifying the successful payment; or
-- connect a payment webhook to a private file-delivery service, then test the complete payment-to-download flow.
-
-Do not publish “instant download” wording unless the automated path is live and verified. For manual fulfilment, state a delivery timeframe in the Payment Page copy.
-
-Use `manual-fulfilment-runbook.md` for the v1.0 manual process. Make a private copy of `fulfilment-ledger-template.csv`; never commit customer data to this repository.
+Do not publish “instant download” wording until the Worker, D1 migration, R2 archive, Worker secrets, live Razorpay keys, webhook, and complete test-mode buyer journey have all been verified. Until then, keep the existing Payment Page and `manual-fulfilment-runbook.md` as the operational fallback.
 
 ## Connect the checkout
 
-Set the GitHub Actions repository variable `NEXT_PUBLIC_CHECKOUT_URL` to the live Razorpay Payment Page URL, then rebuild and publish the site. The storefront will open checkout in a new tab.
+Keep `NEXT_PUBLIC_CHECKOUT_URL` set to the live Razorpay Payment Page while provisioning. After the Worker passes test mode, set `NEXT_PUBLIC_FULFILMENT_API_URL` to its HTTPS origin and rebuild. Automated mode intercepts every purchase button and does not fall through to the manual Payment Page.
 
 ## Before sending traffic
 
-- Make one real low-value test purchase or use the platform’s test mode.
+- Complete a Razorpay test-mode payment through Standard Checkout; do not make a real charge merely to test code.
 - Confirm the payment appears in Razorpay and contains the buyer details needed for fulfilment.
-- Complete the chosen manual or automated fulfilment path and confirm the buyer receives the ZIP.
+- Confirm signature verification rejects an altered payment ID and a non-captured payment cannot obtain a token.
+- Confirm the protected page displays the correct v1.0 checksum and streams the ZIP only with a valid pass.
+- Confirm the fourth download fails, an expired pass fails, and a refund webhook revokes access.
 - Download and extract the ZIP on another device.
 - Open `index.html`, process three photos, and confirm the result ZIP opens correctly.
 - Check that your support email and refund wording are visible on the checkout page.

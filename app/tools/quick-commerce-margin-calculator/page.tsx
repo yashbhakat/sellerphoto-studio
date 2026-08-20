@@ -4,6 +4,7 @@ import SellerEconomicsCalculator from "../../seller-tools";
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH === "__ROOT__" ? "" : process.env.NEXT_PUBLIC_BASE_PATH || "";
 const purchaseHref = process.env.NEXT_PUBLIC_CHECKOUT_URL?.trim() || `${basePath}/#launch-offer`;
+const purchaseApiUrl = process.env.NEXT_PUBLIC_FULFILMENT_API_URL?.trim().replace(/\/$/, "");
 
 export const metadata: Metadata = {
   title: "Quick Commerce Margin Calculator for Brands in India",
@@ -17,6 +18,6 @@ export default function QuickCommerceMarginCalculatorPage() {
   return <main className="resource-page">
     <nav className="site-nav resource-nav shell"><a className="brand" href={`${basePath}/`}><span className="brand-mark">S</span><span>SellerPhoto Studio</span></a><a className="button button-small button-dark" href={`${basePath}/#demo`}>Try photo studio</a></nav>
     <header className="resource-hero shell"><div className="eyebrow">Free quick-commerce seller tool</div><h1>Check quick-commerce margin before the SKU goes live.</h1><p>Rapid delivery can add fulfilment, promotion and wastage pressure. Model those assumptions for Blinkit, Zepto, Swiggy Instamart or another channel without relying on a generic fee promise.</p><div className="hero-actions"><a className="text-link" href={`${basePath}/resources/product-photo-size-guide/`}>Quick-commerce image guide →</a><a className="text-link" href={`${basePath}/tools/marketplace-profit-calculator/`}>Marketplace calculator →</a></div></header>
-    <section className="resource-content shell"><SellerEconomicsCalculator defaultChannel="quick-commerce" purchaseHref={purchaseHref} heading="Model rapid-delivery unit economics." intro="Adjust the example to your category, city, commercial agreement, fulfilment model, promotion plan and wastage risk." /></section>
+    <section className="resource-content shell"><SellerEconomicsCalculator defaultChannel="quick-commerce" purchaseHref={purchaseHref} purchaseApiUrl={purchaseApiUrl} basePath={basePath} heading="Model rapid-delivery unit economics." intro="Adjust the example to your category, city, commercial agreement, fulfilment model, promotion plan and wastage risk." /></section>
   </main>;
 }

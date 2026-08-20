@@ -1,126 +1,252 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-IN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light" />
-  <title>SellerPhoto Studio — Full Offline Edition</title>
+  <meta name="description" content="Offline product photo, video and lifecycle forecasting workspace for ecommerce sellers." />
+  <title>SellerPhoto Studio Pro 1.1 — Seller Media & Forecast Suite</title>
   <link rel="stylesheet" href="./studio.css" />
+  <script src="./studio.js" defer></script>
+  <script src="./video.js" defer></script>
+  <script src="./forecast.js" defer></script>
 </head>
 <body data-mode="pro" data-limit="50">
   <div class="studio-app">
     <header class="studio-topbar">
-      <div class="studio-brand"><span class="studio-logo">S</span><span>SellerPhoto Studio</span></div>
-      <span class="mode-pill" id="modePill">FREE DEMO · 3 PHOTOS</span>
+      <div class="studio-brand"><span class="studio-logo" aria-hidden="true">S</span><span>SellerPhoto Studio</span></div>
+      <nav class="workspace-tabs" aria-label="Paid tools">
+        <button class="workspace-tab active" type="button" data-workspace-target="imageWorkspace" aria-controls="imageWorkspace" aria-selected="true">Image studio</button>
+        <button class="workspace-tab" type="button" data-workspace-target="videoWorkspace" aria-controls="videoWorkspace" aria-selected="false">Video studio</button>
+        <button class="workspace-tab" type="button" data-workspace-target="forecastWorkspace" aria-controls="forecastWorkspace" aria-selected="false">Forecast lab</button>
+      </nav>
+      <span class="mode-pill" id="modePill">PRO 1.1 · OFFLINE SUITE</span>
     </header>
-
-    <main class="studio-layout">
-      <aside class="control-panel">
-        <div class="panel-heading"><span>01</span><div><h1>Style the batch</h1><p>One setup, every image.</p></div></div>
-
-        <section class="control-group">
-          <label class="field-label" for="preset">Marketplace size</label>
-          <select id="preset">
-            <option value="1500x1500">Amazon / Flipkart high-res · 1500 × 1500</option>
-            <option value="1200x1200">Meesho / marketplace square · 1200 × 1200</option>
-            <option value="1200x1200">Blinkit / Zepto / Instamart · 1200 × 1200</option>
-            <option value="1600x1600">D2C / Shopify high-res · 1600 × 1600</option>
-            <option value="1080x1080">Instagram / WhatsApp · 1080 × 1080</option>
-            <option value="1080x1350">Instagram portrait · 1080 × 1350</option>
-            <option value="1080x1920">Story / Status · 1080 × 1920</option>
-            <option value="1500x1500">High-res catalogue · 1500 × 1500</option>
-          </select>
-        </section>
-
-        <section class="control-group two-col">
-          <div>
-            <span class="field-label">Photo fit</span>
-            <div class="segmented">
-              <label><input type="radio" name="fit" value="contain" checked /><span>Fit</span></label>
-              <label><input type="radio" name="fit" value="cover" /><span>Fill</span></label>
-            </div>
-          </div>
-          <div>
-            <label class="field-label" for="background">Background</label>
-            <div class="color-field"><input id="background" type="color" value="#ffffff" /><span id="backgroundText">#FFFFFF</span></div>
-          </div>
-        </section>
-
-        <section class="control-group">
-          <div class="range-label"><label class="field-label" for="margin">Product margin</label><output id="marginValue">6%</output></div>
-          <input id="margin" type="range" min="0" max="24" value="6" />
-        </section>
-
-        <section class="control-group">
-          <label class="field-label" for="storeName">Store name / watermark</label>
-          <input id="storeName" type="text" maxlength="36" placeholder="e.g. Mahi Home Store" />
-        </section>
-
-        <section class="control-group">
-          <label class="field-label" for="skuPrefix">SKU / filename prefix</label>
-          <input id="skuPrefix" type="text" maxlength="28" placeholder="e.g. MHS-BAG-01" />
-          <small class="field-hint">Added to every export filename for faster catalogue uploads.</small>
-        </section>
-
-        <section class="control-group">
-          <div class="toggle-row"><label for="includeManifest">Catalogue manifest CSV <span class="pro-chip">PRO</span></label><input id="includeManifest" type="checkbox" checked /></div>
-          <small class="field-hint">Maps each source image to its exported filename, size, format and SKU prefix.</small>
-        </section>
-
-        <section class="control-group">
-          <div class="toggle-row"><label for="showPrice">Show price badge</label><input id="showPrice" type="checkbox" checked /></div>
-          <div class="two-col compact-row">
-            <input id="priceText" type="text" maxlength="14" value="₹799" aria-label="Price badge text" />
-            <div class="color-field"><input id="badgeColor" type="color" value="#c7ff4a" /><span>Badge</span></div>
-          </div>
-        </section>
-
-        <section class="control-group">
-          <div class="range-label"><label class="field-label" for="logoInput">Optional logo</label><button class="plain-button" id="removeLogo" type="button" hidden>Remove</button></div>
-          <label class="upload-logo" for="logoInput"><span>＋</span><span id="logoLabel">Choose PNG or JPG</span></label>
-          <input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
-        </section>
-
-        <section class="control-group two-col">
-          <div><label class="field-label" for="format">Output</label><select id="format"><option value="jpeg">JPG</option><option value="png">PNG</option></select></div>
-          <div><div class="range-label"><label class="field-label" for="quality">Quality</label><output id="qualityValue">90%</output></div><input id="quality" type="range" min="60" max="100" value="90" /></div>
-        </section>
-      </aside>
-
-      <section class="preview-panel">
-        <div class="preview-toolbar">
-          <div><span class="toolbar-kicker">Live preview</span><strong id="previewName">Add a photo to begin</strong></div>
-          <span id="dimensionLabel">1200 × 1200 px</span>
+    <main>
+      <section class="workspace active" id="imageWorkspace" data-workspace>
+        <header class="workspace-hero">
+          <div><span class="workspace-kicker">Marketplace image compliance studio</span><h1>Build the listing image, not just a resized file.</h1><p>Choose a channel-safe starting point, switch every treatment on or off, inspect likely upload issues, and export an organised catalogue batch.</p></div>
+          <div class="workspace-badges"><span>50-photo batches</span><span>On-device</span><span>Compliance guard</span><span>ZIP + manifest</span></div>
+        </header>
+        <div class="image-layout">
+          <aside class="control-panel" aria-label="Image controls">
+            <div class="panel-heading"><span>01</span><div><h2>Image controls</h2><p>Every treatment is optional.</p></div></div>
+            <section class="control-card control-card-primary">
+              <div class="control-card-title"><div><strong>Platform preset</strong><small>Dimensions and safe defaults</small></div><span class="always-on">CORE</span></div>
+              <label class="field-label" for="preset">Target channel / placement</label>
+              <select id="preset">
+                <option value="amazon-main">Amazon main image · 1600 × 1600</option>
+                <option value="flipkart-main">Flipkart main image · 1500 × 1500</option>
+                <option value="meesho-main">Meesho catalogue · 1200 × 1200</option>
+                <option value="myntra-main">Myntra portrait · 1500 × 2000</option>
+                <option value="quickcommerce-main">Quick-commerce packshot · 1200 × 1200</option>
+                <option value="shopify-square">Shopify / D2C square · 2048 × 2048</option>
+                <option value="instagram-feed">Instagram feed · 1080 × 1350</option>
+                <option value="reels-story">Reels / Story / Status · 1080 × 1920</option>
+                <option value="custom">Custom dimensions</option>
+              </select>
+              <div class="two-col compact-row">
+                <label><span class="field-label">Width</span><div class="unit-input"><input id="customWidth" type="number" min="320" max="6000" value="1600" inputmode="numeric" /><span>px</span></div></label>
+                <label><span class="field-label">Height</span><div class="unit-input"><input id="customHeight" type="number" min="320" max="6000" value="1600" inputmode="numeric" /><span>px</span></div></label>
+              </div>
+              <p class="preset-note" id="presetNote">Conservative main-image preset. Verify the current category rules shown in your seller portal before upload.</p>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Compliance guard</strong><small>Blocks risky main-image overlays</small></div><label class="switch"><input id="enableCompliance" type="checkbox" checked /><span></span><b>Toggle compliance guard</b></label></div>
+              <div class="feature-controls" data-feature-controls="enableCompliance"><p class="control-copy">For strict marketplace presets, force a white background and suppress price, watermark and logo overlays during export.</p></div>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Background canvas</strong><small>Solid export background</small></div><label class="switch"><input id="enableBackground" type="checkbox" checked /><span></span><b>Toggle background</b></label></div>
+              <div class="feature-controls" data-feature-controls="enableBackground"><label class="field-label" for="background">Canvas colour</label><div class="color-field"><input id="background" type="color" value="#ffffff" /><span id="backgroundText">#FFFFFF</span></div></div>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Fit and crop</strong><small>Contain or fill the canvas</small></div><label class="switch"><input id="enableCrop" type="checkbox" checked /><span></span><b>Toggle fit and crop</b></label></div>
+              <div class="feature-controls" data-feature-controls="enableCrop"><div class="segmented"><label><input type="radio" name="fit" value="contain" checked /><span>Fit</span></label><label><input type="radio" name="fit" value="cover" /><span>Fill</span></label></div></div>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Product spacing</strong><small>Controls estimated occupancy</small></div><label class="switch"><input id="enableMargin" type="checkbox" checked /><span></span><b>Toggle product spacing</b></label></div>
+              <div class="feature-controls" data-feature-controls="enableMargin"><div class="range-label"><label class="field-label" for="margin">Outer margin</label><output id="marginValue">7.5%</output></div><input id="margin" type="range" min="0" max="28" value="7.5" step="0.5" /></div>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Tone corrections</strong><small>Non-destructive colour controls</small></div><label class="switch"><input id="enableAdjustments" type="checkbox" checked /><span></span><b>Toggle tone corrections</b></label></div>
+              <div class="feature-controls control-stack" data-feature-controls="enableAdjustments">
+                <div><div class="range-label"><label class="field-label" for="brightness">Brightness</label><output id="brightnessValue">100%</output></div><input id="brightness" type="range" min="60" max="150" value="100" /></div>
+                <div><div class="range-label"><label class="field-label" for="contrast">Contrast</label><output id="contrastValue">100%</output></div><input id="contrast" type="range" min="60" max="160" value="100" /></div>
+                <div><div class="range-label"><label class="field-label" for="saturation">Saturation</label><output id="saturationValue">100%</output></div><input id="saturation" type="range" min="0" max="180" value="100" /></div>
+              </div>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Product shadow</strong><small>Soft catalogue depth</small></div><label class="switch"><input id="enableShadow" type="checkbox" /><span></span><b>Toggle product shadow</b></label></div>
+              <div class="feature-controls two-col" data-feature-controls="enableShadow"><label><span class="field-label">Blur</span><input id="shadowBlur" type="range" min="0" max="50" value="22" /></label><label><span class="field-label">Opacity</span><input id="shadowOpacity" type="range" min="0" max="60" value="22" /></label></div>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Rotation</strong><small>Straighten product framing</small></div><label class="switch"><input id="enableRotation" type="checkbox" /><span></span><b>Toggle rotation</b></label></div>
+              <div class="feature-controls" data-feature-controls="enableRotation"><div class="range-label"><label class="field-label" for="rotation">Angle</label><output id="rotationValue">0°</output></div><input id="rotation" type="range" min="-15" max="15" value="0" step="0.5" /></div>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Price badge</strong><small>For ads and owned channels</small></div><label class="switch"><input id="showPrice" type="checkbox" /><span></span><b>Toggle price badge</b></label></div>
+              <div class="feature-controls two-col" data-feature-controls="showPrice"><input id="priceText" type="text" maxlength="18" value="₹799" aria-label="Price badge text" /><div class="color-field"><input id="badgeColor" type="color" value="#c7ff4a" /><span>Badge</span></div></div>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Store watermark</strong><small>Brand label on owned media</small></div><label class="switch"><input id="enableWatermark" type="checkbox" /><span></span><b>Toggle watermark</b></label></div>
+              <div class="feature-controls" data-feature-controls="enableWatermark"><input id="storeName" type="text" maxlength="36" placeholder="e.g. Mahi Home Store" /></div>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Logo overlay</strong><small>PNG, JPG or WebP</small></div><label class="switch"><input id="enableLogo" type="checkbox" /><span></span><b>Toggle logo overlay</b></label></div>
+              <div class="feature-controls" data-feature-controls="enableLogo"><div class="range-label"><span class="field-label">Brand logo</span><button class="plain-button" id="removeLogo" type="button" hidden>Remove</button></div><label class="upload-logo" for="logoInput"><span>+</span><span id="logoLabel">Choose logo file</span></label><input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden /></div>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Safe-zone guide</strong><small>Preview only; never exported</small></div><label class="switch"><input id="enableSafeZone" type="checkbox" checked /><span></span><b>Toggle safe-zone guide</b></label></div>
+              <p class="control-copy">Shows the intended product area and protected text zone in the live preview.</p>
+            </section>
+            <section class="control-card">
+              <div class="control-card-title"><div><strong>Catalogue manifest</strong><small>CSV mapping for operations</small></div><label class="switch"><input id="includeManifest" type="checkbox" checked /><span></span><b>Toggle catalogue manifest</b></label></div>
+              <div class="feature-controls" data-feature-controls="includeManifest"><label class="field-label" for="skuPrefix">SKU / filename prefix</label><input id="skuPrefix" type="text" maxlength="28" placeholder="e.g. MHS-BAG-01" /></div>
+            </section>
+            <section class="control-card control-card-primary">
+              <div class="control-card-title"><div><strong>Export quality</strong><small>File format and compression</small></div><span class="always-on">CORE</span></div>
+              <div class="two-col"><label><span class="field-label">Format</span><select id="format"><option value="jpeg">JPG</option><option value="png">PNG</option></select></label><div><div class="range-label"><label class="field-label" for="quality">Quality</label><output id="qualityValue">90%</output></div><input id="quality" type="range" min="60" max="100" value="90" /></div></div>
+              <button class="secondary-button" id="resetImageSettings" type="button">Reset preset controls</button>
+            </section>
+          </aside>
+          <section class="preview-panel">
+            <div class="preview-toolbar"><div><span class="toolbar-kicker">Live output preview</span><strong id="previewName">Add a photo to begin</strong></div><div class="preview-tools"><button id="compareOriginal" type="button" aria-pressed="false">Hold to compare</button><span id="dimensionLabel">1600 × 1600 px</span></div></div>
+            <div class="preview-stage" id="previewStage"><div class="preview-placeholder" id="previewPlaceholder"><span class="placeholder-icon">□</span><strong>Your prepared listing image appears here</strong><p>Add a product photo, choose a platform, and review every compliance check.</p></div><img id="previewImage" alt="Formatted product preview" hidden /><div class="rendering" id="rendering" hidden>Rendering preview…</div></div>
+            <div class="privacy-note"><span>●</span> Images are processed on this device and never uploaded.</div>
+            <aside class="compliance-panel" aria-live="polite"><div class="compliance-heading"><div><span class="toolbar-kicker">Pre-upload inspector</span><strong id="complianceTitle">Amazon main image</strong></div><span id="complianceScore">0/6 ready</span></div><ul id="complianceList"></ul><p>Presets are practical starting points, not marketplace certification. Always confirm current account and category rules in the upload portal.</p></aside>
+          </section>
+          <aside class="queue-panel">
+            <div class="panel-heading queue-heading"><span>02</span><div><h2>Your photos</h2><p><strong id="photoCount">0</strong> of <strong id="photoLimit">50</strong> added</p></div></div>
+            <label class="drop-zone" id="dropZone" for="photoInput"><span class="drop-icon">+</span><strong>Drop product photos</strong><small>or click to browse · JPG, PNG, WebP · up to 25 MB each</small></label>
+            <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
+            <div class="queue-list" id="queueList"><p class="empty-queue">Your batch is empty.</p></div>
+            <div class="queue-actions"><button class="clear-button" id="clearAll" type="button" disabled>Clear all</button><button class="export-button" id="exportBatch" type="button" disabled><span>Download ZIP</span><span>↓</span></button></div>
+            <div class="progress-track" id="progressTrack" hidden><span id="progressBar"></span></div>
+            <p class="status-message" id="statusMessage" aria-live="polite">Add photos to create your first batch.</p>
+            <p class="demo-note pro-note" id="demoNote">Pro 1.1 · 50-photo batches · Offline media and forecasting suite.</p>
+          </aside>
         </div>
-        <div class="preview-stage" id="previewStage">
-          <div class="preview-placeholder" id="previewPlaceholder">
-            <span class="placeholder-icon">□</span>
-            <strong>Your formatted photo appears here</strong>
-            <p>Add a product photo, then experiment with the controls.</p>
-          </div>
-          <img id="previewImage" alt="Formatted product preview" hidden />
-          <div class="rendering" id="rendering" hidden>Rendering preview…</div>
-        </div>
-        <div class="privacy-note"><span>●</span> Images are processed locally and never uploaded.</div>
       </section>
-
-      <aside class="queue-panel">
-        <div class="panel-heading queue-heading"><span>02</span><div><h2>Your photos</h2><p><strong id="photoCount">0</strong> of <strong id="photoLimit">3</strong> added</p></div></div>
-        <label class="drop-zone" id="dropZone" for="photoInput">
-          <span class="drop-icon">＋</span><strong>Drop product photos</strong><small>or click to browse · JPG, PNG, WebP</small>
-        </label>
-        <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
-        <div class="queue-list" id="queueList"><p class="empty-queue">Your batch is empty.</p></div>
-        <div class="queue-actions">
-          <button class="clear-button" id="clearAll" type="button" disabled>Clear all</button>
-          <button class="export-button" id="exportBatch" type="button" disabled><span>Download ZIP</span><span>↓</span></button>
+      <section class="workspace" id="videoWorkspace" data-workspace hidden>
+        <header class="workspace-hero video-hero">
+          <div><span class="workspace-kicker">Offline product video studio</span><h1>Turn product photos into channel-ready motion.</h1><p>Build a short product video from up to 12 scenes, add controlled motion, captions, pricing, branding and optional music, then export locally as WebM.</p></div>
+          <div class="workspace-badges"><span>9:16 · 1:1 · 4:5 · 16:9</span><span>Scene timeline</span><span>Optional music</span><span>On-device export</span></div>
+        </header>
+        <div class="video-layout">
+          <aside class="video-settings panel-surface">
+            <div class="panel-heading"><span>01</span><div><h2>Video controls</h2><p>All creative layers are optional.</p></div></div>
+            <section class="control-card control-card-primary">
+              <div class="control-card-title"><div><strong>Channel format</strong><small>Canvas and safe-zone preset</small></div><span class="always-on">CORE</span></div>
+              <select id="videoPreset"><option value="vertical">Reels / Shorts / Status · 1080 × 1920</option><option value="square">Marketplace / social square · 1080 × 1080</option><option value="portrait">Instagram portrait · 1080 × 1350</option><option value="landscape">YouTube / website · 1920 × 1080</option></select>
+              <div class="two-col compact-row"><label><span class="field-label">Seconds / scene</span><div class="unit-input"><input id="sceneDuration" type="number" min="1.5" max="8" step="0.5" value="3" /><span>sec</span></div></label><label><span class="field-label">Frame rate</span><select id="videoFps"><option value="24">24 fps</option><option value="30" selected>30 fps</option></select></label></div>
+            </section>
+            <section class="control-card"><div class="control-card-title"><div><strong>Ken Burns motion</strong><small>Gentle pan and zoom</small></div><label class="switch"><input id="enableMotion" type="checkbox" checked /><span></span><b>Toggle image motion</b></label></div><div class="feature-controls" data-video-controls="enableMotion"><select id="motionStyle"><option value="zoom-in">Zoom in</option><option value="zoom-out">Zoom out</option><option value="pan-left">Pan left</option><option value="pan-right">Pan right</option></select></div></section>
+            <section class="control-card"><div class="control-card-title"><div><strong>Scene transition</strong><small>Blend between images</small></div><label class="switch"><input id="enableTransition" type="checkbox" checked /><span></span><b>Toggle transitions</b></label></div><div class="feature-controls two-col" data-video-controls="enableTransition"><select id="transitionStyle"><option value="fade">Crossfade</option><option value="slide">Slide</option></select><div class="unit-input"><input id="transitionDuration" type="number" min="0.2" max="1.5" step="0.1" value="0.6" /><span>sec</span></div></div></section>
+            <section class="control-card"><div class="control-card-title"><div><strong>Scene captions</strong><small>Per-image selling point</small></div><label class="switch"><input id="enableCaptions" type="checkbox" checked /><span></span><b>Toggle captions</b></label></div><div class="feature-controls" data-video-controls="enableCaptions"><div class="two-col"><div class="color-field"><input id="captionColor" type="color" value="#ffffff" /><span>Text</span></div><div class="color-field"><input id="captionBackground" type="color" value="#171717" /><span>Plate</span></div></div></div></section>
+            <section class="control-card"><div class="control-card-title"><div><strong>Price and call-to-action</strong><small>Reusable closing message</small></div><label class="switch"><input id="enableVideoCta" type="checkbox" checked /><span></span><b>Toggle price and CTA</b></label></div><div class="feature-controls control-stack" data-video-controls="enableVideoCta"><input id="videoPrice" type="text" maxlength="18" value="₹799" aria-label="Video price" /><input id="videoCta" type="text" maxlength="42" value="Shop now" aria-label="Video call to action" /></div></section>
+            <section class="control-card"><div class="control-card-title"><div><strong>Brand logo</strong><small>Corner overlay</small></div><label class="switch"><input id="enableVideoLogo" type="checkbox" /><span></span><b>Toggle video logo</b></label></div><div class="feature-controls" data-video-controls="enableVideoLogo"><label class="upload-logo" for="videoLogoInput"><span>+</span><span id="videoLogoLabel">Choose logo file</span></label><input id="videoLogoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden /></div></section>
+            <section class="control-card"><div class="control-card-title"><div><strong>Background music</strong><small>Optional local audio track</small></div><label class="switch"><input id="enableMusic" type="checkbox" /><span></span><b>Toggle background music</b></label></div><div class="feature-controls" data-video-controls="enableMusic"><label class="upload-logo" for="musicInput"><span>♪</span><span id="musicLabel">Choose MP3, WAV or M4A</span></label><input id="musicInput" type="file" accept="audio/mpeg,audio/wav,audio/mp4,audio/x-m4a" hidden /><div class="range-label compact-row"><label class="field-label" for="musicVolume">Music volume</label><output id="musicVolumeValue">35%</output></div><input id="musicVolume" type="range" min="0" max="100" value="35" /></div></section>
+            <section class="control-card"><div class="control-card-title"><div><strong>Safe-zone guides</strong><small>Preview only</small></div><label class="switch"><input id="enableVideoSafeZone" type="checkbox" checked /><span></span><b>Toggle video safe zones</b></label></div><p class="control-copy">Keeps captions away from common app controls. Guides are not included in the export.</p></section>
+          </aside>
+          <section class="video-preview panel-surface">
+            <div class="preview-toolbar"><div><span class="toolbar-kicker">Video preview</span><strong id="videoPreviewName">Add scenes to begin</strong></div><span id="videoDimensionLabel">1080 × 1920 · WebM</span></div>
+            <div class="video-canvas-wrap"><canvas id="videoCanvas" width="1080" height="1920" aria-label="Product video preview"></canvas><div class="video-empty" id="videoEmpty"><strong>Your product video appears here</strong><span>Add two or more product photos for the best result.</span></div></div>
+            <div class="video-playback"><button id="videoPlay" type="button" disabled>Play preview</button><input id="videoScrubber" type="range" min="0" max="1000" value="0" aria-label="Video position" /><span id="videoTime">00:00 / 00:00</span></div>
+            <div class="progress-track" id="videoProgressTrack" hidden><span id="videoProgressBar"></span></div>
+            <p class="status-message" id="videoStatus" aria-live="polite">Add scenes to start your video.</p>
+            <button class="export-button export-video" id="exportVideo" type="button" disabled><span>Generate product video</span><span>↓</span></button>
+            <p class="export-note">Exports WebM in current Edge/Chrome versions. Some marketplaces require MP4; convert the downloaded file only when the upload portal requires it. Confirm each platform's duration, audio and overlay rules before publishing.</p>
+          </section>
+          <aside class="video-scenes panel-surface">
+            <div class="panel-heading queue-heading"><span>02</span><div><h2>Scene timeline</h2><p><strong id="sceneCount">0</strong> of 12 scenes</p></div></div>
+            <label class="drop-zone" id="videoDropZone" for="videoPhotoInput"><span class="drop-icon">+</span><strong>Add product scenes</strong><small>JPG, PNG or WebP · ordered as added</small></label>
+            <input id="videoPhotoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
+            <div class="scene-list" id="sceneList"><p class="empty-queue">No scenes yet.</p></div>
+            <button class="clear-button clear-scenes" id="clearScenes" type="button" disabled>Clear timeline</button>
+          </aside>
         </div>
-        <div class="progress-track" id="progressTrack" hidden><span id="progressBar" /></div>
-        <p class="status-message" id="statusMessage" aria-live="polite">Add photos to create your first batch.</p>
-        <p class="demo-note" id="demoNote">The offline edition processes up to 50 photos per batch.</p>
-      </aside>
+      </section>
+      <section class="workspace" id="forecastWorkspace" data-workspace hidden>
+        <header class="workspace-hero forecast-hero">
+          <div><span class="workspace-kicker">Product lifetime forecasting lab</span><h1>Model the product from launch cost to lifetime cash.</h1><p>Forecast demand, price erosion, costs, channel fees, ads, returns, tax and working capital month by month—then compare downside, base and upside cases.</p></div>
+          <div class="workspace-badges"><span>12–60 months</span><span>3 scenarios</span><span>Cash breakeven</span><span>CSV + print report</span></div>
+        </header>
+        <div class="forecast-layout">
+          <aside class="forecast-inputs panel-surface">
+            <div class="panel-heading"><span>01</span><div><h2>Forecast assumptions</h2><p>Replace examples with your own data.</p></div></div>
+            <section class="control-card control-card-primary">
+              <div class="control-card-title"><div><strong>Plan and channel</strong><small>Starting model</small></div><span class="always-on">CORE</span></div>
+              <label class="field-label" for="forecastProductName">Product / SKU</label><input class="forecast-input" id="forecastProductName" type="text" value="New marketplace product" maxlength="60" />
+              <div class="two-col compact-row"><label><span class="field-label">Channel</span><select id="forecastChannel"><option value="marketplace">Marketplace</option><option value="quickcommerce">Quick commerce</option><option value="d2c">D2C / social</option></select></label><label><span class="field-label">Forecast length</span><select class="forecast-input" id="forecastMonths"><option value="12">12 months</option><option value="24">24 months</option><option value="36" selected>36 months</option><option value="48">48 months</option><option value="60">60 months</option></select></label></div>
+            </section>
+            <details class="forecast-group" open>
+              <summary>Demand lifecycle</summary>
+              <div class="forecast-fields">
+                <label>Launch month units<input class="forecast-input" id="baseUnits" type="number" min="0" value="150" /></label>
+                <label>Launch growth / month<input class="forecast-input" id="launchGrowth" type="number" step="0.1" value="18" /><span>%</span></label>
+                <label>Ramp-up months<input class="forecast-input" id="rampMonths" type="number" min="1" max="24" value="6" /></label>
+                <label>Mature growth / month<input class="forecast-input" id="matureGrowth" type="number" step="0.1" value="2" /><span>%</span></label>
+                <label>Decline begins in month<input class="forecast-input" id="declineStart" type="number" min="2" max="60" value="25" /></label>
+                <label>Decline / month<input class="forecast-input" id="declineRate" type="number" min="0" max="50" step="0.1" value="4" /><span>%</span></label>
+              </div>
+              <div class="forecast-toggles"><label><input class="forecast-input" id="useDecline" type="checkbox" checked /> Model lifecycle decline</label><label><input class="forecast-input" id="useSeasonality" type="checkbox" checked /> Apply seasonality</label></div>
+              <div class="two-col compact-row"><label><span class="field-label">Seasonality strength</span><div class="unit-input"><input class="forecast-input" id="seasonality" type="number" min="0" max="60" value="15" /><span>%</span></div></label><label><span class="field-label">Peak month</span><select class="forecast-input" id="peakMonth"><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10" selected>October</option><option value="11">November</option><option value="12">December</option></select></label></div>
+            </details>
+            <details class="forecast-group" open>
+              <summary>Price and unit costs</summary>
+              <div class="forecast-fields">
+                <label>Selling price<input class="forecast-input" id="sellingPrice" type="number" min="0" value="799" /><span>₹</span></label>
+                <label>Product landed cost<input class="forecast-input" id="productCost" type="number" min="0" value="320" /><span>₹</span></label>
+                <label>Fulfilment / order<input class="forecast-input" id="fulfilmentCost" type="number" min="0" value="65" /><span>₹</span></label>
+                <label>Packaging / order<input class="forecast-input" id="packagingCost" type="number" min="0" value="15" /><span>₹</span></label>
+                <label>Annual price erosion<input class="forecast-input" id="priceErosion" type="number" min="0" max="50" step="0.1" value="4" /><span>%</span></label>
+                <label>Annual cost inflation<input class="forecast-input" id="costInflation" type="number" min="0" max="50" step="0.1" value="5" /><span>%</span></label>
+              </div>
+            </details>
+            <details class="forecast-group" open>
+              <summary>Channel leakage and returns</summary>
+              <div class="forecast-fields">
+                <label>Platform fee<input class="forecast-input" id="platformFee" type="number" min="0" max="90" step="0.1" value="15" /><span>%</span></label>
+                <label>Advertising spend<input class="forecast-input" id="adRate" type="number" min="0" max="90" step="0.1" value="8" /><span>%</span></label>
+                <label>Return / wastage rate<input class="forecast-input" id="returnRate" type="number" min="0" max="90" step="0.1" value="8" /><span>%</span></label>
+                <label>Handling per return<input class="forecast-input" id="returnCost" type="number" min="0" value="110" /><span>₹</span></label>
+              </div>
+              <label class="inline-check"><input class="forecast-input" id="includeReturns" type="checkbox" checked /> Include return refunds and handling</label>
+            </details>
+            <details class="forecast-group">
+              <summary>Launch, overhead, tax and cash</summary>
+              <div class="forecast-fields">
+                <label>One-time launch cost<input class="forecast-input" id="launchCost" type="number" min="0" value="60000" /><span>₹</span></label>
+                <label>Monthly fixed overhead<input class="forecast-input" id="monthlyOverhead" type="number" min="0" value="15000" /><span>₹</span></label>
+                <label>Estimated profit tax<input class="forecast-input" id="taxRate" type="number" min="0" max="60" step="0.1" value="25" /><span>%</span></label>
+                <label>Inventory cover<input class="forecast-input" id="inventoryWeeks" type="number" min="0" max="52" step="0.5" value="8" /><span>weeks</span></label>
+                <label>Target lifetime profit<input class="forecast-input" id="targetProfit" type="number" min="0" value="1000000" /><span>₹</span></label>
+              </div>
+              <div class="forecast-toggles"><label><input class="forecast-input" id="includeTax" type="checkbox" checked /> Include estimated tax</label><label><input class="forecast-input" id="includeWorkingCapital" type="checkbox" checked /> Include inventory cash timing</label></div>
+            </details>
+            <div class="forecast-actions"><button class="secondary-button" id="saveForecast" type="button">Save assumptions</button><button class="plain-action" id="resetForecast" type="button">Reset channel preset</button></div>
+            <p class="forecast-disclaimer">Planning model only—not tax, accounting or marketplace-fee advice. Validate fees, tax treatment, inventory recoverability and category rules with current contracts and professionals.</p>
+          </aside>
+          <section class="forecast-results panel-surface" aria-live="polite">
+            <div class="forecast-result-head"><div><span class="toolbar-kicker">Base case · product lifetime</span><h2 id="forecastTitle">New marketplace product</h2></div><div class="scenario-health" id="forecastHealth">Reviewing assumptions</div></div>
+            <div class="metric-grid">
+              <article><span>Lifetime revenue</span><strong id="lifetimeRevenue">₹0</strong><small id="lifetimeUnits">0 net units</small></article>
+              <article><span>Lifetime net profit</span><strong id="lifetimeProfit">₹0</strong><small id="netMargin">0% net margin</small></article>
+              <article><span>Cash breakeven</span><strong id="breakEvenMonth">—</strong><small id="breakEvenUnits">0 units / month operating BE</small></article>
+              <article><span>Return on launch cash</span><strong id="forecastRoi">0%</strong><small id="initialCash">₹0 initial cash at risk</small></article>
+              <article><span>Peak month</span><strong id="peakSalesMonth">—</strong><small id="peakUnits">0 units</small></article>
+              <article><span>Target gap</span><strong id="targetGap">₹0</strong><small id="targetStatus">Set a target to track</small></article>
+            </div>
+            <section class="forecast-chart-card"><div class="chart-heading"><div><strong>Revenue and profit trajectory</strong><span>Monthly values</span></div><div class="chart-legend"><span><i class="revenue-dot"></i>Revenue</span><span><i class="profit-dot"></i>Net profit</span></div></div><canvas id="forecastChart" width="1100" height="430" aria-label="Monthly revenue and profit forecast chart"></canvas></section>
+            <section class="scenario-section"><div class="section-line"><div><span class="toolbar-kicker">Risk range</span><h3>Conservative, base and aggressive outcomes</h3></div></div><div class="scenario-grid" id="scenarioGrid"></div></section>
+            <section class="insight-grid"><article><span class="toolbar-kicker">Decision signals</span><ul id="forecastInsights"></ul></article><article><span class="toolbar-kicker">Unit economics now</span><dl id="unitEconomics"></dl></article></section>
+            <section class="sensitivity-section"><div class="section-line"><div><span class="toolbar-kicker">Sensitivity grid</span><h3>Lifetime profit if price or demand changes</h3></div><p>Rows change demand; columns change selling price.</p></div><div class="table-scroll"><table class="sensitivity-table"><thead><tr><th>Demand \ Price</th><th>−10%</th><th>Base</th><th>+10%</th></tr></thead><tbody id="sensitivityBody"></tbody></table></div></section>
+            <details class="monthly-details"><summary>Open month-by-month forecast</summary><div class="table-scroll"><table><thead><tr><th>Month</th><th>Gross units</th><th>Net revenue</th><th>Variable cost</th><th>Net profit</th><th>Cumulative cash</th></tr></thead><tbody id="monthlyForecastBody"></tbody></table></div></details>
+            <div class="report-actions"><button class="export-button" id="exportForecastCsv" type="button"><span>Download forecast CSV</span><span>↓</span></button><button class="secondary-button" id="printForecast" type="button">Print / save report</button></div>
+          </section>
+        </div>
+      </section>
     </main>
   </div>
-  <script src="./studio.js"></script>
 </body>
 </html>
