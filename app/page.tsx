@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import CheckoutButton from "./checkout-button";
 import SellerEconomicsCalculator from "./lazy-seller-tools";
 import { PRODUCT } from "../config/product.mjs";
@@ -94,9 +95,43 @@ export default function Home() {
           <div className="proof-row" aria-label="Product benefits"><span>✓ On-device</span><span>✓ Mobile-friendly</span><span>✓ Works offline</span><span>✓ One-time Pro purchase</span></div>
         </div>
         <div className="hero-visual" aria-label="Before and after ecommerce product photography">
-          <div className="visual-grid"><img src={basePath + "/hero-marketplace.jpg"} width="1536" height="1024" fetchPriority="high" decoding="async" alt="Products arranged for a clean ecommerce catalogue" /></div>
-          <div className="photo-card photo-before"><div className="card-label">Phone photo</div><img className="product-photo product-photo-before" src={basePath + "/seller-bag.jpg"} width="1254" height="1254" loading="lazy" decoding="async" alt="Original product photo of an orange crossbody bag" /><span className="scribble">camera roll</span></div>
-          <div className="photo-card photo-after"><div className="card-label card-label-dark">Ready to list</div><div className="price-chip">₹799</div><img className="product-photo product-photo-after" src={basePath + "/seller-bag.jpg"} width="1254" height="1254" loading="lazy" decoding="async" alt="Marketplace-ready product image of an orange crossbody bag" /><div className="mini-brand">YOUR STORE</div></div>
+          <div className="visual-grid">
+            <Image
+              src={basePath + "/hero-marketplace.jpg"}
+              width={1536}
+              height={1024}
+              priority
+              sizes="(max-width: 760px) 100vw, 50vw"
+              alt="Products arranged for a clean ecommerce catalogue"
+            />
+          </div>
+          <div className="photo-card photo-before">
+            <div className="card-label">Phone photo</div>
+            <Image
+              className="product-photo product-photo-before"
+              src={basePath + "/seller-bag.jpg"}
+              width={1254}
+              height={1254}
+              loading="lazy"
+              sizes="(max-width: 760px) 50vw, 210px"
+              alt="Original product photo of an orange crossbody bag"
+            />
+            <span className="scribble">camera roll</span>
+          </div>
+          <div className="photo-card photo-after">
+            <div className="card-label card-label-dark">Ready to list</div>
+            <div className="price-chip">₹799</div>
+            <Image
+              className="product-photo product-photo-after"
+              src={basePath + "/seller-bag.jpg"}
+              width={1254}
+              height={1254}
+              loading="lazy"
+              sizes="(max-width: 760px) 50vw, 210px"
+              alt="Marketplace-ready product image of an orange crossbody bag"
+            />
+            <div className="mini-brand">YOUR STORE</div>
+          </div>
           <div className="batch-chip"><strong>3</strong><span>Pro workspaces</span></div>
         </div>
       </section>

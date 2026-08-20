@@ -11,7 +11,11 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "dist/**",
     "next-env.d.ts",
+    // The downloadable offline app is a separately tested release artifact.
+    "product/**",
+    "public/studio.js",
   ]),
 ]);
 

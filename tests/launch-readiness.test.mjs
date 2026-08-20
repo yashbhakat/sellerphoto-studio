@@ -129,8 +129,9 @@ test("SEO metadata and loading-critical assets stay optimized", async () => {
   assert.match(layout, /max-image-preview/);
   assert.match(layout, /og\.png/);
   assert.match(page, /FAQPage/);
+  assert.match(page, /import Image from "next\/image"/);
   assert.match(page, /hero-marketplace\.jpg/);
-  assert.match(page, /fetchPriority="high"/);
+  assert.match(page, /\bpriority\b/);
   assert.match(page, /loading="lazy"/);
   assert.match(nextConfig, /configuredBasePath === "__ROOT__"/);
   assert.match(nextConfig, /trailingSlash: true/);
