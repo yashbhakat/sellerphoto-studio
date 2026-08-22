@@ -45,8 +45,10 @@ export default function PrivacyPage() {
           <h2>Optional Google Analytics</h2>
           <p>
             Analytics loads only after you choose <strong>Allow analytics</strong>. It can report page visits, broad
-            device and browser information, interactions such as starting checkout, and an approximate country or
-            region derived from network information. It does not receive precise GPS location, product-photo contents,
+            device and browser information, interactions such as starting checkout or completing a verified purchase,
+            and an approximate country or region derived from network information. A successful purchase event uses the
+            random checkout-attempt identifier for duplicate prevention; it does not include the Razorpay order ID,
+            payment ID, or download pass. Google Analytics does not receive precise GPS location, product-photo contents,
             or payment-card details.
           </p>
           <p>
@@ -90,7 +92,7 @@ export default function PrivacyPage() {
           </ul>
         </section>
 
-        <p className="privacy-updated">Last updated: 21 August 2026</p>
+        <p className="privacy-updated">Last updated: 22 August 2026</p>
       </article>
     </main>
   );

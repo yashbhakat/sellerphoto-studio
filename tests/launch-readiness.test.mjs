@@ -50,13 +50,19 @@ test("checkout verification rejects placeholders and disabled output paired with
   );
 });
 
-test("analytics requires consent and tracks checkout intent without advertising signals", async () => {
-  const source = await readFile(new URL("../app/analytics-consent.tsx", import.meta.url), "utf8");
+test("analytics requires consent and tracks verified purchases without advertising signals", async () => {
+  const [source, checkout] = await Promise.all([
+    readFile(new URL("../app/analytics-consent.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/checkout-button.tsx", import.meta.url), "utf8"),
+  ]);
   assert.match(source, /sellerphoto-analytics-consent/);
   assert.match(source, /analytics_storage: "granted"/);
   assert.match(source, /ad_storage: "denied"/);
   assert.match(source, /allow_google_signals: false/);
   assert.match(source, /"begin_checkout"/);
+  assert.match(checkout, /"purchase"/);
+  assert.match(checkout, /transaction_id: idempotencyKey/);
+  assert.doesNotMatch(checkout, /transaction_id:\s*payment\.razorpay_/);
   assert.match(source, /sensitiveRoute/);
   assert.match(source, /PRODUCT\.analyticsItemId/);
 });
@@ -118,9 +124,13 @@ test("automated fulfilment and administrator access are server-verified and priv
 });
 
 test("SEO metadata and loading-critical assets stay optimized", async () => {
-  const [layout, page, nextConfig, hero, product, social] = await Promise.all([
+  const [layout, page, sitemap, amazon, flipkart, meesho, nextConfig, hero, product, social] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/tools/amazon-seller-profit-calculator-india/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/tools/flipkart-seller-profit-calculator-india/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/tools/meesho-profit-calculator/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../next.config.ts", import.meta.url), "utf8"),
     stat(new URL("../public/hero-marketplace.jpg", import.meta.url)),
     stat(new URL("../public/seller-bag.jpg", import.meta.url)),
@@ -133,6 +143,13 @@ test("SEO metadata and loading-critical assets stay optimized", async () => {
   assert.match(page, /hero-marketplace\.jpg/);
   assert.match(page, /\bpriority\b/);
   assert.match(page, /loading="lazy"/);
+  for (const [source, phrase] of [[amazon, "Amazon Seller Profit Calculator India"], [flipkart, "Flipkart Seller Profit Calculator India"], [meesho, "Meesho Profit Calculator for Sellers"]]) {
+    assert.match(source, new RegExp(phrase));
+    assert.match(source, /alternates: \{ canonical:/);
+  }
+  assert.match(sitemap, /amazon-seller-profit-calculator-india/);
+  assert.match(sitemap, /flipkart-seller-profit-calculator-india/);
+  assert.match(sitemap, /meesho-profit-calculator/);
   assert.match(nextConfig, /configuredBasePath === "__ROOT__"/);
   assert.match(nextConfig, /trailingSlash: true/);
   assert.ok(hero.size < 175_000, `hero image is ${hero.size} bytes`);

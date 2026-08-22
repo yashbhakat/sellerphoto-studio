@@ -116,6 +116,12 @@ export default function CheckoutButton({
           setMessage("Payment received. Verifying your protected download…");
           try {
             const token = await verifyUntilCaptured(payment);
+            window.gtag?.("event", "purchase", {
+              transaction_id: idempotencyKey,
+              currency: PRODUCT.currency,
+              value: PRODUCT.priceInr,
+              items: [{ item_id: PRODUCT.analyticsItemId, item_name: `${PRODUCT.name} v${PRODUCT.version}`, price: PRODUCT.priceInr, quantity: 1 }],
+            });
             sessionStorage.setItem("sellerphoto-download-token", token);
             window.location.assign(`${basePath}/download/#token=${encodeURIComponent(token)}`);
           } catch (error) {

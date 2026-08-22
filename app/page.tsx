@@ -64,6 +64,9 @@ const features = [
 
 const toolCards = [
   ["Profit calculator", "Price marketplace products after fees, fulfilment, ads and expected returns.", basePath + "/tools/marketplace-profit-calculator/", "Calculate profit"],
+  ["Amazon seller profit", "Estimate Amazon India margin, break-even price and contribution using your current seller costs.", basePath + "/tools/amazon-seller-profit-calculator-india/", "Calculate Amazon profit"],
+  ["Flipkart seller profit", "Model Flipkart selling charges, logistics, promotions and expected returns for one SKU.", basePath + "/tools/flipkart-seller-profit-calculator-india/", "Calculate Flipkart profit"],
+  ["Meesho profit", "Check Meesho product profit after logistics, packaging, promotions and return or RTO exposure.", basePath + "/tools/meesho-profit-calculator/", "Calculate Meesho profit"],
   ["Quick-commerce margin", "Model platform charges, promotions, fulfilment and wastage for rapid-delivery channels.", basePath + "/tools/quick-commerce-margin-calculator/", "Check unit economics"],
   ["Product image guide", "Choose practical export sizes for marketplaces, quick commerce, D2C and social catalogues.", basePath + "/resources/product-photo-size-guide/", "Open size guide"],
   ["3-photo formatter", "Test the private batch workflow in your browser before buying the full seller suite.", "#demo", "Try the studio"],

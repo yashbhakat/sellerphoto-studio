@@ -13,8 +13,8 @@
 
 - Version: 1.1.0
 - R2 key: `seller-photo-studio/v1.1.0/SellerPhotoStudio-v1.1.0.zip`
-- SHA-256: `10BD48C4280EF95ACD51DBCE3372BF145727929AD5FC067770525436AC098E58`
-- Expected contents: `index.html`, `README.txt`, `studio.css`, `studio.js`
+- SHA-256: `50257132C4FAC9EF007158A6FFDE395453E5E4742DFEFC42145CFC2F6F4EC00A`
+- Expected contents: `index.html`, `README.txt`, `studio.css`, `studio.js`, `video.js`, `forecast.js`
 
 Run `npm run verify:release` before every R2 upload. Never overwrite an existing version key with different bytes; publish a new version/key and update the Worker configuration.
 

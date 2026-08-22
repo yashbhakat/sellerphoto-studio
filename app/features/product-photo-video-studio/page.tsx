@@ -5,8 +5,8 @@ const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").re
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH === "__ROOT__" ? "" : process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const metadata: Metadata = {
-  title: "Marketplace Product Photo Editor & Video Maker",
-  description: "Prepare marketplace product photos with platform presets and feature toggles, then turn catalogue images into short product videos on your device.",
+  title: "Product Photo Editor for Ecommerce & Product Video Maker",
+  description: "Edit ecommerce product photos with marketplace presets and feature toggles, then turn catalogue images into short product videos privately on your device.",
   keywords: ["marketplace product photo editor", "product video maker for ecommerce", "Amazon listing image editor India", "Flipkart photo size editor", "Meesho catalogue photo maker", "product photo compliance checker", "offline product video generator"],
   alternates: { canonical: siteUrl + "/features/product-photo-video-studio/" },
   openGraph: { title: "Product Photo Compliance Studio & Video Maker", description: "Batch product images, inspect likely upload issues and create short catalogue videos without uploading media.", url: siteUrl + "/features/product-photo-video-studio/", images: [siteUrl + "/og.png"] },
@@ -32,7 +32,7 @@ export default function ProductPhotoVideoStudioPage() {
   return <main className="resource-page feature-detail-page">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
     <nav className="site-nav resource-nav shell"><a className="brand" href={basePath + "/"}><span className="brand-mark">S</span><span>SellerPhoto Studio</span></a><a className="button button-small button-dark" href={basePath + "/#launch-offer"}>Get Pro</a></nav>
-    <header className="resource-hero feature-detail-hero shell"><div className="eyebrow">Paid media tools · Image + video</div><h1>One controlled media workflow for every product listing.</h1><p>Prepare consistent product images with conservative channel presets and switchable treatments, inspect likely upload problems, then turn the same catalogue photos into short product videos.</p><div className="hero-actions"><a className="button button-primary" href={basePath + "/#launch-offer"}>Get the ₹{PRODUCT.priceInr} Pro suite</a><a className="text-link" href={basePath + "/#demo"}>Try 3 photos free →</a></div></header>
+    <header className="resource-hero feature-detail-hero shell"><div className="eyebrow">Paid media tools · Image + video</div><h1>Product photo editor and video maker for ecommerce sellers.</h1><p>Prepare consistent product images with conservative Amazon, Flipkart, Meesho, quick-commerce and owned-store presets, inspect likely upload problems, then turn the same catalogue photos into short product videos.</p><div className="hero-actions"><a className="button button-primary" href={basePath + "/#launch-offer"}>Get the ₹{PRODUCT.priceInr} Pro suite</a><a className="text-link" href={basePath + "/#demo"}>Try 3 photos free →</a></div></header>
 
     <section className="feature-detail-band"><div className="shell detail-metric-grid"><article><strong>50</strong><p>Photos per batch with one consistent setup.</p></article><article><strong>9</strong><p>Channel and placement image presets.</p></article><article><strong>13</strong><p>Image treatments and operations with direct controls.</p></article><article><strong>12</strong><p>Product scenes per generated video.</p></article></div></section>
 
